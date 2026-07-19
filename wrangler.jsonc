@@ -8,7 +8,7 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
-    "run_worker_first": ["/", "/es/*"],
+    "run_worker_first": ["/", "/es/*", "/language/*"],
     "not_found_handling": "404-page",
     "html_handling": "drop-trailing-slash"
   }
