@@ -1,64 +1,199 @@
-.error-page {
+.error-shell {
   display: flex;
-  width: min(100%, 1180px);
   min-height: 100vh;
-  margin: 0 auto;
-  padding: 34px 44px 70px;
   flex-direction: column;
 }
 
-.error-page > section {
-  display: grid;
-  max-width: 760px;
-  margin: auto 0;
+.error-main {
+  flex: 1;
+  padding: clamp(72px, 9vw, 130px) 40px 100px;
 }
 
-.error-page h1 {
-  margin: 16px 0 24px;
+.error-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  align-items: end;
+  gap: clamp(40px, 8vw, 120px);
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.error-hero h1 {
+  margin: 16px 0 0;
   font-family: var(--font-display);
-  font-size: clamp(64px, 11vw, 132px);
+  font-size: clamp(62px, 9vw, 124px);
   font-weight: 400;
   letter-spacing: -0.07em;
   line-height: 0.84;
 }
 
-.error-page h1 span {
+.error-hero h1 span,
+.error-hero h1 strong {
   display: block;
-  color: var(--accent);
 }
 
-.error-page section > p:not(.section-kicker) {
-  max-width: 560px;
+.error-hero h1 strong {
+  color: var(--accent);
+  font-weight: inherit;
+}
+
+.error-copy > p {
+  max-width: 470px;
   margin: 0;
   color: var(--text-soft);
   font-size: 14px;
   line-height: 1.75;
 }
 
-.error-page-link {
+.error-actions {
   display: flex;
-  width: min(100%, 390px);
+  align-items: center;
+  gap: 14px;
+  margin-top: 30px;
+}
+
+.error-primary-link,
+.error-actions button {
+  min-height: 46px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.error-primary-link {
+  display: flex;
+  min-width: 230px;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  margin-top: 34px;
-  border: 1px solid var(--accent);
-  border-radius: 3px;
-  padding: 15px 17px;
+  gap: 22px;
+  padding: 0 16px;
   background: var(--accent);
   color: #07100d;
-  font-size: 12px;
-  font-weight: 750;
   transition: filter 160ms ease, transform 160ms ease;
 }
 
-.error-page-link:hover {
+.error-primary-link:hover {
   filter: brightness(1.08);
   transform: translateY(-2px);
 }
 
-@media (max-width: 680px) {
-  .error-page {
-    padding: 24px 20px 48px;
+.error-actions button {
+  border: 1px solid var(--line);
+  padding: 0 16px;
+  background: var(--bg-raised);
+  color: var(--text-soft);
+  transition: border-color 160ms ease, color 160ms ease;
+}
+
+.error-actions button:hover {
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.error-suggestions {
+  max-width: 1180px;
+  margin: clamp(80px, 10vw, 140px) auto 0;
+  border-top: 1px solid var(--line);
+  padding-top: 34px;
+}
+
+.error-section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 24px;
+}
+
+.error-section-heading h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(25px, 3vw, 38px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+.error-resource-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.error-resource {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 84px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 15px;
+  background: var(--bg-card);
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.error-resource:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.error-resource img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.error-resource > span:nth-child(2) {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.error-resource strong {
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.error-resource small {
+  color: var(--text-faint);
+  font-size: 9px;
+}
+
+.error-resource > span:last-child {
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .error-hero {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .error-resource-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .error-main {
+    padding: 72px 18px 76px;
+  }
+
+  .error-actions,
+  .error-section-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .error-primary-link,
+  .error-actions button {
+    width: 100%;
+  }
+
+  .error-resource-grid {
+    grid-template-columns: 1fr;
   }
 }
