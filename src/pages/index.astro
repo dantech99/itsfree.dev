@@ -4,6 +4,15 @@ import LogoMark from "../components/LogoMark.astro"
 import CategoryIcon from "../components/CategoryIcon.astro"
 import { categories, getResourceFaviconUrl, resources, sourceReviewedAt } from "../data/resources"
 
+interface Props {
+  locale?: "en" | "es"
+}
+
+const { locale = "en" } = Astro.props as Props
+const t = <T,>(copy: { en: T; es: T }) => copy[locale]
+const localePrefix = locale === "es" ? "/es" : ""
+const alternateUrl = locale === "es" ? "/" : "/es"
+
 const totalResources = resources.length
 const featuredResources = resources.filter((resource) => resource.featured).length
 const featuredOrder = ["InsForge", "CodeRabbit", "Cloudflare", "Vercel"]
@@ -16,7 +25,7 @@ const sortedResources = [...resources].sort((first, second) => {
   const secondRank = featuredRank.get(second.name) ?? Number.POSITIVE_INFINITY
   return firstRank - secondRank
 })
-const reviewedDate = new Intl.DateTimeFormat("en", {
+const reviewedDate = new Intl.DateTimeFormat(locale, {
   month: "short",
   year: "numeric",
 }).format(new Date(`${sourceReviewedAt}T12:00:00Z`))
@@ -38,8 +47,28 @@ const categoryCounts = new Map(
   ]),
 )
 const siteUrl = "https://itsfree.dev"
-const homeDescription = "A curated bilingual directory of genuinely useful free developer tools, APIs, hosting, databases, AI models and more."
-const faqEntries = [
+const homeDescription = t({
+  en: "A curated directory of genuinely useful free developer tools, APIs, hosting, databases, AI models and more.",
+  es: "Un directorio seleccionado de herramientas gratuitas realmente útiles para developers: APIs, hosting, bases de datos, modelos de IA y más.",
+})
+const faqEntries = locale === "es" ? [
+  {
+    question: "¿Todas estas herramientas son completamente gratis?",
+    answer: "Todos los productos ofrecen una capa gratuita útil, aunque puede tener límites de uso, almacenamiento o equipo. No significa que sean productos gratuitos sin límites.",
+  },
+  {
+    question: "¿Necesito una tarjeta de crédito?",
+    answer: "La mayoría de los recursos no la requieren. Cada ficha indica claramente cuándo hace falta una tarjeta para acceder a toda la cuota gratuita.",
+  },
+  {
+    question: "¿Cada cuánto se actualiza el directorio?",
+    answer: "Revisamos el catálogo regularmente, añadimos descubrimientos útiles y retiramos productos cuya oferta gratuita deja de ser relevante.",
+  },
+  {
+    question: "¿Por qué está disponible en dos idiomas?",
+    answer: "Las buenas herramientas para developers deberían ser fáciles de descubrir tanto en inglés como en español.",
+  },
+] : [
   {
     question: "Are all these tools completely free?",
     answer: "Every product listed offers a useful free tier, but it may include usage, storage or team limits. It is not the same as an unlimited free product.",
@@ -54,7 +83,7 @@ const faqEntries = [
   },
   {
     question: "Why is the site available in two languages?",
-    answer: "Great developer tools should be easy to discover in both English and Spanish. Language preference is saved automatically.",
+    answer: "Great developer tools should be easy to discover in both English and Spanish.",
   },
 ]
 const homeStructuredData = {
@@ -65,16 +94,16 @@ const homeStructuredData = {
       "@id": `${siteUrl}/#website`,
       name: "it's free*",
       alternateName: "itsfree.dev",
-      url: `${siteUrl}/`,
+      url: `${siteUrl}${localePrefix || "/"}`,
       description: homeDescription,
-      inLanguage: ["en", "es"],
+      inLanguage: locale,
       publisher: { "@type": "Organization", name: "midu.dev", url: "https://midu.dev" },
     },
     {
       "@type": "CollectionPage",
-      "@id": `${siteUrl}/#directory`,
-      url: `${siteUrl}/`,
-      name: "Free tools for developers",
+      "@id": `${siteUrl}${localePrefix || "/"}#directory`,
+      url: `${siteUrl}${localePrefix || "/"}`,
+      name: t({ en: "Free tools for developers", es: "Herramientas gratuitas para developers" }),
       description: homeDescription,
       dateModified: sourceReviewedAt,
       isPartOf: { "@id": `${siteUrl}/#website` },
@@ -85,7 +114,7 @@ const homeStructuredData = {
           "@type": "ListItem",
           position: index + 1,
           name: resource.name,
-          url: `${siteUrl}/tools/${resource.slug}`,
+          url: `${siteUrl}${localePrefix}/tools/${resource.slug}`,
         })),
       },
     },
@@ -102,8 +131,11 @@ const homeStructuredData = {
 ---
 
 <Layout
-  title="it's free* — Free tools for developers"
+  title={t({ en: "it's free* — Free tools for developers", es: "it's free* — Herramientas gratis para developers" })}
   description={homeDescription}
+  locale={locale}
+  canonical={localePrefix || "/"}
+  alternate={alternateUrl}
 >
   <div class="site-shell">
     <header class="topbar">
@@ -113,9 +145,9 @@ const homeStructuredData = {
       </a>
 
       <nav class="topbar-nav" aria-label="Primary navigation">
-        <a href="#directory" data-i18n data-en="Explore" data-es="Explorar">Explore</a>
-        <a href="#about" data-i18n data-en="About" data-es="Sobre el proyecto">About</a>
-        <a href="/sponsor" data-i18n data-en="Sponsor" data-es="Patrocinar">Sponsor</a>
+        <a href="#directory">{t({ en: "Explore", es: "Explorar" })}</a>
+        <a href="#about">{t({ en: "About", es: "Sobre el proyecto" })}</a>
+        <a href={`${localePrefix}/sponsor`}>{t({ en: "Sponsor", es: "Patrocinar" })}</a>
       </nav>
 
       <div class="topbar-actions">
@@ -123,27 +155,25 @@ const homeStructuredData = {
           <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
           <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 15.5A8.4 8.4 0 0 1 8.5 3.6 8.4 8.4 0 1 0 20.4 15.5Z"></path></svg>
         </button>
-        <button class="language-button" id="language-toggle" type="button" aria-label="Cambiar a español">ES</button>
+        <a class="language-button" href={alternateUrl} lang={locale === "es" ? "en" : "es"} hreflang={locale === "es" ? "en" : "es"} aria-label={t({ en: "Cambiar a español", es: "Switch to English" })}>{locale === "es" ? "EN" : "ES"}</a>
       </div>
     </header>
 
     <main id="top">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-glow" aria-hidden="true"></div>
-        <p class="eyebrow"><span class="status-dot"></span><span data-i18n data-en="The good part of the internet" data-es="La parte buena de internet">The good part of the internet</span></p>
+        <p class="eyebrow"><span class="status-dot"></span><span>{t({ en: "The good part of the internet", es: "La parte buena de internet" })}</span></p>
         <h1 id="hero-title">
-          <span data-i18n data-en="Build more." data-es="Construye más.">Build more.</span>
-          <span class="hero-accent" data-i18n data-en="Spend less." data-es="Gasta menos.">Spend less.</span>
+          <span>{t({ en: "Build more.", es: "Construye más." })}</span>
+          <span class="hero-accent">{t({ en: "Spend less.", es: "Gasta menos." })}</span>
         </h1>
-        <p class="hero-copy" data-i18n data-en="A carefully selected catalog of products with genuinely useful free tiers for developers, makers and small teams." data-es="Un catálogo cuidadosamente seleccionado de productos con capas gratuitas realmente útiles para developers, makers y pequeños equipos.">
-          A carefully selected catalog of products with genuinely useful free tiers for developers, makers and small teams.
-        </p>
+        <p class="hero-copy">{t({ en: "A carefully selected catalog of products with genuinely useful free tiers for developers, makers and small teams.", es: "Un catálogo cuidadosamente seleccionado de productos con capas gratuitas realmente útiles para developers, makers y pequeños equipos." })}</p>
 
         <div class="hero-stats" aria-label="Directory statistics">
-          <div><strong>{totalResources}</strong><span data-i18n data-en="resources" data-es="recursos">resources</span></div>
-          <div><strong>{categories.length}</strong><span data-i18n data-en="categories" data-es="categorías">categories</span></div>
-          <div><strong>{featuredResources}</strong><span data-i18n data-en="editor's picks" data-es="recomendados">editor's picks</span></div>
-          <div><strong>{reviewedDate}</strong><span data-i18n data-en="last review" data-es="última revisión">last review</span></div>
+          <div><strong>{totalResources}</strong><span>{t({ en: "resources", es: "recursos" })}</span></div>
+          <div><strong>{categories.length}</strong><span>{t({ en: "categories", es: "categorías" })}</span></div>
+          <div><strong>{featuredResources}</strong><span>{t({ en: "editor's picks", es: "recomendados" })}</span></div>
+          <div><strong>{reviewedDate}</strong><span>{t({ en: "last review", es: "última revisión" })}</span></div>
         </div>
       </section>
 
@@ -151,9 +181,9 @@ const homeStructuredData = {
         <div class="directory-heading">
           <div>
             <p class="section-kicker">// DIRECTORY_01</p>
-            <h2 id="directory-title" data-i18n data-en="Find your next tool" data-es="Encuentra tu próxima herramienta">Find your next tool</h2>
+            <h2 id="directory-title">{t({ en: "Find your next tool", es: "Encuentra tu próxima herramienta" })}</h2>
           </div>
-          <p data-i18n data-en="Search by product, use case or technology." data-es="Busca por producto, caso de uso o tecnología.">Search by product, use case or technology.</p>
+          <p>{t({ en: "Search by product, use case or technology.", es: "Busca por producto, caso de uso o tecnología." })}</p>
         </div>
 
         <div class="search-panel">
@@ -163,10 +193,8 @@ const homeStructuredData = {
             type="search"
             autocomplete="off"
             spellcheck="false"
-            placeholder={`Search ${totalResources} free resources...`}
-            data-placeholder-en={`Search ${totalResources} free resources...`}
-            data-placeholder-es={`Busca entre ${totalResources} recursos gratis...`}
-            aria-label="Search resources"
+            placeholder={t({ en: `Search ${totalResources} free resources...`, es: `Busca entre ${totalResources} recursos gratis...` })}
+            aria-label={t({ en: "Search resources", es: "Buscar recursos" })}
           />
           <kbd>/</kbd>
         </div>
@@ -174,43 +202,43 @@ const homeStructuredData = {
         <div class="mobile-categories" aria-label="Resource categories">
           <button class="mobile-category active" type="button" data-category="all">
             <CategoryIcon name="layout-grid" size={14} />
-            <span data-i18n data-en="All" data-es="Todo">All</span>
+            <span>{t({ en: "All", es: "Todo" })}</span>
           </button>
           {categories.map((category) => (
             <button class="mobile-category" type="button" data-category={category.id}>
               <CategoryIcon name={category.icon} size={14} />
-              <span data-en={category.name.en} data-es={category.name.es} data-i18n>{category.name.en}</span>
+              <span>{t({ en: category.name.en, es: category.name.es })}</span>
             </button>
           ))}
         </div>
 
         <div class="catalog-layout">
           <aside class="category-sidebar">
-            <div class="category-label" data-i18n data-en="Browse by category" data-es="Explora por categoría">Browse by category</div>
+            <div class="category-label">{t({ en: "Browse by category", es: "Explora por categoría" })}</div>
             <button class="category-button active" type="button" data-category="all">
               <span class="category-icon"><CategoryIcon name="layout-grid" /></span>
-              <span data-i18n data-en="All resources" data-es="Todos los recursos">All resources</span>
+              <span>{t({ en: "All resources", es: "Todos los recursos" })}</span>
               <small>{totalResources}</small>
             </button>
             {categories.map((category) => (
               <button class="category-button" type="button" data-category={category.id}>
                 <span class="category-icon"><CategoryIcon name={category.icon} /></span>
-                <span data-i18n data-en={category.name.en} data-es={category.name.es}>{category.name.en}</span>
+                <span>{t({ en: category.name.en, es: category.name.es })}</span>
                 <small>{categoryCounts.get(category.id)}</small>
               </button>
             ))}
-            <a class="sponsor-mini" href="/sponsor">
+            <a class="sponsor-mini" href={`${localePrefix}/sponsor`}>
               <span class="sponsor-mini-mark">AD*</span>
               <span>
-                <strong data-i18n data-en="Sponsor this directory" data-es="Patrocina este directorio">Sponsor this directory</strong>
-                <small data-i18n data-en="€1,500 / 30 days →" data-es="1.500 € / 30 días →">€1,500 / 30 days →</small>
+                <strong>{t({ en: "Sponsor this directory", es: "Patrocina este directorio" })}</strong>
+                <small>{t({ en: "€1,500 / 30 days →", es: "1.500 € / 30 días →" })}</small>
               </span>
             </a>
           </aside>
 
           <div class="results-column">
             <div class="results-toolbar">
-              <p><span id="results-count">{totalResources}</span> <span data-i18n data-en="resources found" data-es="recursos encontrados">resources found</span></p>
+              <p><span id="results-count">{totalResources}</span> <span>{t({ en: "resources found", es: "recursos encontrados" })}</span></p>
             </div>
 
             <div class="resource-grid" id="resource-grid">
@@ -221,7 +249,7 @@ const homeStructuredData = {
                 const freeTierEs = cleanFreeTierPrefix(resource.freeTier.es, "es")
                 const initials = resource.name.split(/\s+/).map((word) => word[0]).join("").slice(0, 2).toUpperCase()
                 const faviconUrl = getResourceFaviconUrl(resource)
-                const searchable = [resource.name, resource.description.en, resource.description.es, resource.freeTier.en, resource.freeTier.es, ...resource.tags, category.name.en, category.name.es].join(" ").toLowerCase()
+                const searchable = [resource.name, resource.description[locale], resource.freeTier[locale], ...resource.tags, category.name[locale]].join(" ").toLowerCase()
                 return (
                   <article class={`resource-card${resource.featured ? " is-featured" : ""}`} data-resource data-category={resource.category} data-name={resource.name} data-search={searchable}>
                     {resource.featured && <span class="featured-corner" title="Editor's pick">✦</span>}
@@ -234,24 +262,21 @@ const homeStructuredData = {
                       <a class="card-arrow card-external-link" href={resource.url} target="_blank" rel="noreferrer" aria-label={`Open ${resource.name} website`}>↗</a>
                     </div>
                     <div class="card-body">
-                      <p data-i18n data-en={resource.description.en} data-es={resource.description.es}>{resource.description.en}</p>
+                      <p>{t({ en: resource.description.en, es: resource.description.es })}</p>
                       <div class="free-tier">
                         <span
                           class:list={{
                             "is-trial": resource.accessRequirement === "trial-only",
                             "is-card-required": resource.accessRequirement === "card-for-full-limits",
                           }}
-                          data-i18n
-                          data-en={accessLabel.en}
-                          data-es={accessLabel.es}
-                        >{accessLabel.en}</span>
-                        <p data-i18n data-en={freeTierEn} data-es={freeTierEs}>{freeTierEn}</p>
+                        >{t({ en: accessLabel.en, es: accessLabel.es })}</span>
+                        <p>{t({ en: freeTierEn, es: freeTierEs })}</p>
                       </div>
                     </div>
                     <div class="card-footer">
                       <div class="tags">{resource.tags.slice(0, 2).map((tag) => <span>{tag}</span>)}</div>
                     </div>
-                    <a class="card-link" href={`/tools/${resource.slug}`} aria-label={`Read about ${resource.name}`}></a>
+                    <a class="card-link" href={`${localePrefix}/tools/${resource.slug}`} aria-label={t({ en: `Read about ${resource.name}`, es: `Leer sobre ${resource.name}` })}></a>
                   </article>
                 )
               })}
@@ -259,9 +284,9 @@ const homeStructuredData = {
 
             <div class="empty-state" id="empty-state" hidden>
               <span>Ø</span>
-              <h3 data-i18n data-en="Nothing found in this corner." data-es="No hay nada por este rincón.">Nothing found in this corner.</h3>
-              <p data-i18n data-en="Try another search or explore all categories." data-es="Prueba otra búsqueda o explora todas las categorías.">Try another search or explore all categories.</p>
-              <button id="reset-filters" type="button" data-i18n data-en="Reset filters" data-es="Limpiar filtros">Reset filters</button>
+              <h3>{t({ en: "Nothing found in this corner.", es: "No hay nada por este rincón." })}</h3>
+              <p>{t({ en: "Try another search or explore all categories.", es: "Prueba otra búsqueda o explora todas las categorías." })}</p>
+              <button id="reset-filters" type="button">{t({ en: "Reset filters", es: "Limpiar filtros" })}</button>
             </div>
           </div>
         </div>
@@ -270,41 +295,39 @@ const homeStructuredData = {
       <section class="about-strip" id="about">
         <p class="section-kicker">// OPEN_WEB</p>
         <div>
-          <h2 data-i18n data-en="Free should be easy to find." data-es="Lo gratis debería ser fácil de encontrar.">Free should be easy to find.</h2>
-          <p data-i18n data-en="An independent bilingual directory built to make genuinely useful free tools easier to discover. We review every entry and keep the catalog focused on products developers can actually use." data-es="Un directorio bilingüe e independiente creado para descubrir herramientas gratuitas realmente útiles. Revisamos cada entrada y mantenemos el catálogo centrado en productos que un developer puede usar de verdad.">
-            An independent bilingual directory built to make genuinely useful free tools easier to discover. We review every entry and keep the catalog focused on products developers can actually use.
-          </p>
+          <h2>{t({ en: "Free should be easy to find.", es: "Lo gratis debería ser fácil de encontrar." })}</h2>
+          <p>{t({ en: "An independent bilingual directory built to make genuinely useful free tools easier to discover. We review every entry and keep the catalog focused on products developers can actually use.", es: "Un directorio bilingüe e independiente creado para descubrir herramientas gratuitas realmente útiles. Revisamos cada entrada y mantenemos el catálogo centrado en productos que un developer puede usar de verdad." })}</p>
         </div>
-        <a href="#directory"><span data-i18n data-en="Explore the catalog" data-es="Explorar el catálogo">Explore the catalog</span><span>↓</span></a>
+        <a href="#directory"><span>{t({ en: "Explore the catalog", es: "Explorar el catálogo" })}</span><span>↓</span></a>
       </section>
 
       <section class="faq-section" id="faq" aria-labelledby="faq-title">
         <div class="faq-intro">
           <p class="section-kicker">// FAQ_04</p>
-          <h2 id="faq-title" data-i18n data-en="Questions, answered." data-es="Preguntas, resueltas.">Questions, answered.</h2>
-          <p data-i18n data-en="The small print, without making it small." data-es="La letra pequeña, sin hacerla pequeña.">The small print, without making it small.</p>
+          <h2 id="faq-title">{t({ en: "Questions, answered.", es: "Preguntas, resueltas." })}</h2>
+          <p>{t({ en: "The small print, without making it small.", es: "La letra pequeña, sin hacerla pequeña." })}</p>
         </div>
 
         <div class="faq-list">
           <details open>
-            <summary><span data-i18n data-en="Are all these tools completely free?" data-es="¿Todas estas herramientas son completamente gratis?">Are all these tools completely free?</span><span class="faq-toggle">＋</span></summary>
-            <p data-i18n data-en="Every product listed offers a useful free tier, but it may include usage, storage or team limits. It is not the same as an unlimited free product." data-es="Todos los productos ofrecen una capa gratuita útil, aunque puede tener límites de uso, almacenamiento o equipo. No significa que sean productos gratuitos sin límites.">Every product listed offers a useful free tier, but it may include usage, storage or team limits. It is not the same as an unlimited free product.</p>
+            <summary><span>{t({ en: "Are all these tools completely free?", es: "¿Todas estas herramientas son completamente gratis?" })}</span><span class="faq-toggle">＋</span></summary>
+            <p>{t({ en: "Every product listed offers a useful free tier, but it may include usage, storage or team limits. It is not the same as an unlimited free product.", es: "Todos los productos ofrecen una capa gratuita útil, aunque puede tener límites de uso, almacenamiento o equipo. No significa que sean productos gratuitos sin límites." })}</p>
           </details>
           <details>
-            <summary><span data-i18n data-en="How do you choose what gets listed?" data-es="¿Cómo elegís qué aparece en el listado?">How do you choose what gets listed?</span><span class="faq-toggle">＋</span></summary>
-            <p data-i18n data-en="We prioritize reliable tools with a free plan that is genuinely useful for building, learning or launching a real project." data-es="Priorizamos herramientas fiables con un plan gratuito que sea realmente útil para construir, aprender o lanzar un proyecto real.">We prioritize reliable tools with a free plan that is genuinely useful for building, learning or launching a real project.</p>
+            <summary><span>{t({ en: "How do you choose what gets listed?", es: "¿Cómo elegís qué aparece en el listado?" })}</span><span class="faq-toggle">＋</span></summary>
+            <p>{t({ en: "We prioritize reliable tools with a free plan that is genuinely useful for building, learning or launching a real project.", es: "Priorizamos herramientas fiables con un plan gratuito que sea realmente útil para construir, aprender o lanzar un proyecto real." })}</p>
           </details>
           <details>
-            <summary><span data-i18n data-en="Can I use these services in production?" data-es="¿Puedo usar estos servicios en producción?">Can I use these services in production?</span><span class="faq-toggle">＋</span></summary>
-            <p data-i18n data-en="Often yes, especially for small apps. Check current limits, support, data location and upgrade costs with the provider before making a production decision." data-es="A menudo sí, especialmente en aplicaciones pequeñas. Comprueba límites, soporte, ubicación de datos y costes de ampliación antes de decidir.">Often yes, especially for small apps. Check current limits, support, data location and upgrade costs with the provider before making a production decision.</p>
+            <summary><span>{t({ en: "Can I use these services in production?", es: "¿Puedo usar estos servicios en producción?" })}</span><span class="faq-toggle">＋</span></summary>
+            <p>{t({ en: "Often yes, especially for small apps. Check current limits, support, data location and upgrade costs with the provider before making a production decision.", es: "A menudo sí, especialmente en aplicaciones pequeñas. Comprueba límites, soporte, ubicación de datos y costes de ampliación antes de decidir." })}</p>
           </details>
           <details>
-            <summary><span data-i18n data-en="How often is the directory reviewed?" data-es="¿Cada cuánto se revisa el directorio?">How often is the directory reviewed?</span><span class="faq-toggle">＋</span></summary>
-            <p data-i18n data-en="We review the catalog regularly, add useful discoveries and remove products whose free offer is no longer relevant." data-es="Revisamos el catálogo regularmente, añadimos descubrimientos útiles y retiramos productos cuya oferta gratuita deja de ser relevante.">We review the catalog regularly, add useful discoveries and remove products whose free offer is no longer relevant.</p>
+            <summary><span>{t({ en: "How often is the directory reviewed?", es: "¿Cada cuánto se revisa el directorio?" })}</span><span class="faq-toggle">＋</span></summary>
+            <p>{t({ en: "We review the catalog regularly, add useful discoveries and remove products whose free offer is no longer relevant.", es: "Revisamos el catálogo regularmente, añadimos descubrimientos útiles y retiramos productos cuya oferta gratuita deja de ser relevante." })}</p>
           </details>
           <details>
-            <summary><span data-i18n data-en="Why is the site available in two languages?" data-es="¿Por qué está disponible en dos idiomas?">Why is the site available in two languages?</span><span class="faq-toggle">＋</span></summary>
-            <p data-i18n data-en="Great developer tools should be easy to discover in both English and Spanish. Your language preference is saved automatically." data-es="Las buenas herramientas para developers deberían ser fáciles de descubrir en inglés y español. Tu preferencia se guarda automáticamente.">Great developer tools should be easy to discover in both English and Spanish. Your language preference is saved automatically.</p>
+            <summary><span>{t({ en: "Why is the site available in two languages?", es: "¿Por qué está disponible en dos idiomas?" })}</span><span class="faq-toggle">＋</span></summary>
+            <p>{t({ en: "Great developer tools should be easy to discover in both English and Spanish. Each language has its own fast, indexable URL.", es: "Las buenas herramientas para developers deberían ser fáciles de descubrir en inglés y español. Cada idioma tiene su propia URL rápida e indexable." })}</p>
           </details>
         </div>
       </section>
@@ -313,8 +336,8 @@ const homeStructuredData = {
     <footer class="footer">
       <a class="brand footer-brand" href="#top"><LogoMark /><span class="brand-name">it's free<span>*</span></span></a>
       <div class="footer-signature">
-        <p><span data-i18n data-en="A project by" data-es="Un proyecto de">A project by</span> <a href="https://midu.dev" target="_blank" rel="noreferrer">midu.dev ↗</a></p>
-        <p data-i18n data-en="Made for developers who read the pricing page first." data-es="Hecho para developers que leen primero la página de precios.">Made for developers who read the pricing page first.</p>
+        <p><span>{t({ en: "A project by", es: "Un proyecto de" })}</span> <a href="https://midu.dev" target="_blank" rel="noreferrer">midu.dev ↗</a></p>
+        <p>{t({ en: "Made for developers who read the pricing page first.", es: "Hecho para developers que leen primero la página de precios." })}</p>
       </div>
       <nav class="social-links" aria-label="midu.dev social networks">
         <a href="https://twitter.com/midudev" target="_blank" rel="noreferrer" aria-label="X / Twitter">X <span>↗</span></a>
@@ -334,7 +357,6 @@ const homeStructuredData = {
     const categoryButtons = [...document.querySelectorAll<HTMLButtonElement>("[data-category]")]
     const resultsCount = document.querySelector<HTMLElement>("#results-count")!
     const emptyState = document.querySelector<HTMLElement>("#empty-state")!
-    const languageToggle = document.querySelector<HTMLButtonElement>("#language-toggle")!
     const themeToggle = document.querySelector<HTMLButtonElement>("#theme-toggle")!
 
     document.querySelectorAll<HTMLImageElement>(".resource-logo img").forEach((image) => {
@@ -348,7 +370,6 @@ const homeStructuredData = {
 
     let activeCategory = "all"
 
-    const getLocale = () => root.lang === "es" ? "es" : "en"
     const normalizeSearch = (value: string) => value
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
@@ -356,21 +377,6 @@ const homeStructuredData = {
       .replace(/[^a-z0-9]+/g, " ")
       .trim()
     const compactSearch = (value: string) => normalizeSearch(value).replace(/\s+/g, "")
-
-    function applyLocale(locale: "en" | "es") {
-      root.lang = locale
-      document.querySelectorAll<HTMLElement>("[data-i18n]").forEach((element) => {
-        const translation = locale === "es" ? element.dataset.es : element.dataset.en
-        if (translation) element.textContent = translation
-      })
-      searchInput.placeholder = locale === "es"
-        ? searchInput.dataset.placeholderEs ?? ""
-        : searchInput.dataset.placeholderEn ?? ""
-      searchInput.setAttribute("aria-label", locale === "es" ? "Buscar recursos" : "Search resources")
-      languageToggle.textContent = locale === "es" ? "EN" : "ES"
-      languageToggle.setAttribute("aria-label", locale === "es" ? "Switch to English" : "Cambiar a español")
-      try { localStorage.setItem("itsfree-locale", locale) } catch {}
-    }
 
     function applyFilters() {
       const query = normalizeSearch(searchInput.value)
@@ -420,7 +426,6 @@ const homeStructuredData = {
       searchInput.focus()
     })
 
-    languageToggle.addEventListener("click", () => applyLocale(getLocale() === "en" ? "es" : "en"))
     themeToggle.addEventListener("click", () => {
       const nextTheme = root.dataset.theme === "light" ? "dark" : "light"
       root.dataset.theme = nextTheme
@@ -440,7 +445,6 @@ const homeStructuredData = {
       }
     })
 
-    applyLocale(getLocale())
     applyFilters()
   </script>
 </Layout>

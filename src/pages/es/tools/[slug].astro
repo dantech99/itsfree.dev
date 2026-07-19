@@ -1,0 +1,16 @@
+---
+import ResourcePage from "../../tools/[slug].astro"
+import { resources, type Resource } from "../../../data/resources"
+
+export function getStaticPaths() {
+  return resources.map((resource) => ({ params: { slug: resource.slug }, props: { resource } }))
+}
+
+interface Props {
+  resource: Resource
+}
+
+const { resource } = Astro.props as Props
+---
+
+<ResourcePage {...({ resource, locale: "es" } as any)} />

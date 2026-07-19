@@ -1,28 +1,120 @@
 ---
 import Layout from "../layouts/Layout.astro"
 import LogoMark from "../components/LogoMark.astro"
+import { categories, getResourceFaviconUrl, resources } from "../data/resources"
 import "../styles/error.css"
+
+interface Props {
+  locale?: "en" | "es"
+}
+
+const { locale = "en" } = Astro.props as Props
+const t = <T,>(copy: { en: T; es: T }) => copy[locale]
+const localePrefix = locale === "es" ? "/es" : ""
+const alternateUrl = locale === "es" ? "/404.html" : "/es/404.html"
+
+const suggestedNames = ["InsForge", "CodeRabbit", "Turso", "Upstash"]
+const suggestedResources = suggestedNames
+  .map((name) => resources.find((resource) => resource.name === name))
+  .filter((resource) => resource !== undefined)
+const categoryMap = new Map(categories.map((category) => [category.id, category]))
 ---
 
 <Layout
-  title="Page not found — it's free*"
-  description="The requested page could not be found. Return to the itsfree.dev directory."
+  title={t({ en: "Page not found — it's free*", es: "Página no encontrada — it's free*" })}
+  description={t({ en: "The requested page could not be found. Return to the itsfree.dev directory.", es: "No hemos encontrado la página solicitada. Vuelve al directorio de itsfree.dev." })}
+  locale={locale}
+  canonical={locale === "es" ? "/es/404.html" : "/404.html"}
+  alternate={alternateUrl}
   noindex
 >
-  <main class="error-page">
-    <a class="brand" href="/" aria-label="Return to itsfree.dev">
-      <LogoMark />
-      <span class="brand-name">it's free<span>*</span></span>
-    </a>
-
-    <section aria-labelledby="error-title">
-      <p class="section-kicker">// ERROR_404</p>
-      <h1 id="error-title">Lost in the <span>free tier.</span></h1>
-      <p>Page not found. La página que buscas no existe o ha cambiado de dirección.</p>
-      <a class="error-page-link" href="/">
-        <span>Back to the directory · Volver al directorio</span>
-        <span aria-hidden="true">→</span>
+  <div class="site-shell error-shell">
+    <header class="topbar">
+      <a class="brand" href={localePrefix || "/"} aria-label="it's free home">
+        <LogoMark />
+        <span class="brand-name">it's free<span>*</span></span>
       </a>
-    </section>
-  </main>
+
+      <nav class="topbar-nav" aria-label="Primary navigation">
+        <a href={`${localePrefix || "/"}#directory`}>{t({ en: "Directory", es: "Directorio" })}</a>
+        <a href={`${localePrefix}/sponsor`}>{t({ en: "Sponsor", es: "Patrocinar" })}</a>
+      </nav>
+
+      <div class="topbar-actions">
+        <button class="icon-button" id="theme-toggle" type="button" aria-label="Use light theme">
+          <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 15.5A8.4 8.4 0 0 1 8.5 3.6 8.4 8.4 0 1 0 20.4 15.5Z"></path></svg>
+        </button>
+        <a class="language-button" href={alternateUrl} lang={locale === "es" ? "en" : "es"} hreflang={locale === "es" ? "en" : "es"} aria-label={t({ en: "Cambiar a español", es: "Switch to English" })}>{locale === "es" ? "EN" : "ES"}</a>
+      </div>
+    </header>
+
+    <main class="error-main">
+      <section class="error-hero" aria-labelledby="error-title">
+        <div>
+          <p class="section-kicker">// ERROR_404</p>
+          <h1 id="error-title"><span>{t({ en: "Lost in the", es: "Te has perdido en el" })}</span> <strong>{t({ en: "free tier.", es: "plan gratuito." })}</strong></h1>
+        </div>
+        <div class="error-copy">
+          <p>{t({ en: "This page does not exist or has moved. The useful stuff is still here.", es: "Esta página no existe o ha cambiado de dirección. Lo útil sigue estando aquí." })}</p>
+          <div class="error-actions">
+            <a class="error-primary-link" href={`${localePrefix || "/"}#directory`}>
+              <span>{t({ en: "Explore all resources", es: "Explorar todos los recursos" })}</span>
+              <span aria-hidden="true">→</span>
+            </a>
+            <button id="history-back" type="button">{t({ en: "Go back", es: "Volver atrás" })}</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="error-suggestions" aria-labelledby="suggestions-title">
+        <div class="error-section-heading">
+          <p class="section-kicker">// START_HERE</p>
+          <h2 id="suggestions-title">{t({ en: "Or try one of our favorites.", es: "O prueba uno de nuestros favoritos." })}</h2>
+        </div>
+        <div class="error-resource-grid">
+          {suggestedResources.map((resource) => {
+            const category = categoryMap.get(resource.category)!
+            return (
+              <a class="error-resource" href={`${localePrefix}/tools/${resource.slug}`}>
+                <img src={getResourceFaviconUrl(resource)} alt="" width="30" height="30" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+                <span>
+                  <strong>{resource.name}</strong>
+                  <small>{t({ en: category.name.en, es: category.name.es })}</small>
+                </span>
+                <span aria-hidden="true">→</span>
+              </a>
+            )
+          })}
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <a class="brand footer-brand" href={localePrefix || "/"}><LogoMark /><span class="brand-name">it's free<span>*</span></span></a>
+      <div class="footer-signature">
+        <p><span>{t({ en: "A project by", es: "Un proyecto de" })}</span> <a href="https://midu.dev" target="_blank" rel="noreferrer">midu.dev ↗</a></p>
+        <p>{t({ en: "Made for developers who read the pricing page first.", es: "Hecho para developers que leen primero la página de precios." })}</p>
+      </div>
+      <nav class="social-links" aria-label="midu.dev social networks">
+        <a href="https://twitter.com/midudev" target="_blank" rel="noreferrer" aria-label="X / Twitter">X <span>↗</span></a>
+        <a href="https://youtube.com/@midudev" target="_blank" rel="noreferrer" aria-label="YouTube">YouTube <span>↗</span></a>
+        <a href="https://twitch.tv/midudev" target="_blank" rel="noreferrer" aria-label="Twitch">Twitch <span>↗</span></a>
+        <a href="https://github.com/midudev" target="_blank" rel="noreferrer" aria-label="GitHub">GitHub <span>↗</span></a>
+      </nav>
+    </footer>
+  </div>
+
+  <script>
+    const root = document.documentElement
+    const themeToggle = document.querySelector<HTMLButtonElement>("#theme-toggle")!
+    const historyBack = document.querySelector<HTMLButtonElement>("#history-back")!
+    themeToggle.addEventListener("click", () => {
+      const nextTheme = root.dataset.theme === "light" ? "dark" : "light"
+      root.dataset.theme = nextTheme
+      themeToggle.setAttribute("aria-label", nextTheme === "dark" ? "Use light theme" : "Use dark theme")
+      try { localStorage.setItem("itsfree-theme", nextTheme) } catch {}
+    })
+    historyBack.addEventListener("click", () => history.length > 1 ? history.back() : location.assign(document.documentElement.lang === "es" ? "/es" : "/"))
+  </script>
 </Layout>
