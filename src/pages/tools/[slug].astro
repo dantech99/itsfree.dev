@@ -1,0 +1,252 @@
+---
+import Layout from "../../layouts/Layout.astro"
+import LogoMark from "../../components/LogoMark.astro"
+import CategoryIcon from "../../components/CategoryIcon.astro"
+import { categories, getResourceFaviconUrl, resources, sourceReviewedAt, type Resource } from "../../data/resources"
+import { buildResourceDetail } from "../../data/resource-details"
+import "../../styles/resource-detail.css"
+
+export function getStaticPaths() {
+  return resources.map((resource) => ({ params: { slug: resource.slug }, props: { resource } }))
+}
+
+interface Props {
+  resource: Resource
+}
+
+const { resource } = Astro.props as Props
+const detail = buildResourceDetail(resource)
+const category = categories.find((entry) => entry.id === resource.category)!
+const accessLabels = {
+  "no-card": { en: "No card required", es: "Sin tarjeta" },
+  "no-signup": { en: "No sign-up", es: "Sin registro" },
+  "card-for-full-limits": { en: "Card for full limits", es: "Tarjeta para la cuota completa" },
+  "trial-only": { en: "Trial only", es: "Solo prueba" },
+} as const
+const accessLabel = accessLabels[resource.accessRequirement]
+const relatedResources = resources
+  .filter((candidate) => candidate.category === resource.category && candidate.slug !== resource.slug)
+  .map((candidate) => ({
+    resource: candidate,
+    affinity: candidate.tags.filter((tag) => resource.tags.includes(tag)).length + Number(Boolean(candidate.featured)),
+  }))
+  .sort((first, second) => second.affinity - first.affinity || first.resource.name.localeCompare(second.resource.name))
+  .slice(0, 4)
+  .map(({ resource }) => resource)
+const faviconUrl = getResourceFaviconUrl(resource)
+const screenshotUrl = `https://api.sitelookeratter.com/screenshot?url=${encodeURIComponent(resource.url)}&device=desktop&format=webp&darkMode=true&removeCookies=true&blockAds=true&removeChat=true&removePopups=true`
+const reviewedDate = new Intl.DateTimeFormat("en", { day: "numeric", month: "long", year: "numeric" }).format(new Date(`${sourceReviewedAt}T12:00:00Z`))
+const reviewedDateEs = new Intl.DateTimeFormat("es", { day: "numeric", month: "long", year: "numeric" }).format(new Date(`${sourceReviewedAt}T12:00:00Z`))
+const pageUrl = `https://itsfree.dev/tools/${resource.slug}`
+const pageDescription = `Review ${resource.name}'s free tier, current limits, pricing, access requirements, practical use cases and developer alternatives.`
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": `${pageUrl}#webpage`,
+      url: pageUrl,
+      name: `${resource.name} free tier, limits and pricing`,
+      description: pageDescription,
+      dateModified: sourceReviewedAt,
+      inLanguage: ["en", "es"],
+      isPartOf: { "@id": "https://itsfree.dev/#website" },
+      mainEntity: { "@id": `${pageUrl}#software` },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Directory", item: "https://itsfree.dev/" },
+        { "@type": "ListItem", position: 2, name: category.name.en, item: "https://itsfree.dev/#directory" },
+        { "@type": "ListItem", position: 3, name: resource.name, item: pageUrl },
+      ],
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${pageUrl}#software`,
+      name: resource.name,
+      url: resource.url,
+      sameAs: resource.url,
+      applicationCategory: "DeveloperApplication",
+      applicationSubCategory: category.name.en,
+      operatingSystem: "Web",
+      description: resource.description.en,
+      isAccessibleForFree: resource.accessRequirement !== "trial-only",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD", description: resource.freeTier.en, url: resource.pricingUrl },
+    },
+  ],
+}
+---
+
+<Layout title={`${resource.name} free tier & pricing | it's free*`} description={pageDescription}>
+  <div class="site-shell detail-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="it's free home">
+        <LogoMark />
+        <span class="brand-name">it's free<span>*</span></span>
+      </a>
+      <nav class="topbar-nav" aria-label="Primary navigation">
+        <a href="/#directory" data-i18n data-en="Directory" data-es="Directorio">Directory</a>
+        <a class="active-link" href={`/tools/${resource.slug}`} data-i18n data-en="Resource" data-es="Recurso">Resource</a>
+        <a href="/sponsor" data-i18n data-en="Sponsor" data-es="Patrocinar">Sponsor</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="icon-button" id="theme-toggle" type="button" aria-label="Use light theme">
+          <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 15.5A8.4 8.4 0 0 1 8.5 3.6 8.4 8.4 0 1 0 20.4 15.5Z"></path></svg>
+        </button>
+        <button class="language-button" id="language-toggle" type="button" aria-label="Cambiar a español">ES</button>
+      </div>
+    </header>
+
+    <main class="detail-main">
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="/" data-i18n data-en="Directory" data-es="Directorio">Directory</a><span>/</span>
+        <a href={`/#directory`} data-i18n data-en={category.name.en} data-es={category.name.es}>{category.name.en}</a><span>/</span>
+        <strong>{resource.name}</strong>
+      </nav>
+
+      <div class="detail-intro-grid">
+        <section class="detail-hero">
+          <div class="detail-identity">
+            <span class="detail-logo">
+              <img src={faviconUrl} alt="" width="48" height="48" referrerpolicy="no-referrer" />
+            </span>
+            <div>
+              <p class="section-kicker">// RESOURCE_PROFILE</p>
+              <h1>{resource.name}</h1>
+              <p class="detail-category" data-i18n data-en={category.name.en} data-es={category.name.es}>{category.name.en}</p>
+            </div>
+          </div>
+          <p class="detail-hero-summary" data-i18n data-en={resource.description.en} data-es={resource.description.es}>{resource.description.en}</p>
+          <div class="detail-actions">
+            <a class="primary-visit" href={resource.url} target="_blank" rel="noreferrer">
+              <span data-i18n data-en={`Visit ${resource.name}`} data-es={`Visitar ${resource.name}`}>Visit {resource.name}</span><span>↗</span>
+            </a>
+            <a class="back-directory" href="/#directory" data-i18n data-en="Back to directory" data-es="Volver al directorio">Back to directory</a>
+          </div>
+        </section>
+
+        <section class="screenshot-section" aria-labelledby="preview-title">
+          <div class="section-heading-compact">
+            <div><p class="section-kicker">// LIVE_PREVIEW</p><h2 id="preview-title" data-i18n data-en="Official website" data-es="Web oficial">Official website</h2></div>
+            <span data-i18n data-en="Dark mode forced" data-es="Modo oscuro forzado">Dark mode forced</span>
+          </div>
+          <figure class="site-screenshot">
+            <div class="browser-chrome" aria-hidden="true"><i></i><i></i><i></i><span>{new URL(resource.url).hostname}</span></div>
+            <div class="screenshot-frame">
+              <div class="screenshot-fallback" aria-hidden="true"><img src={faviconUrl} alt="" referrerpolicy="no-referrer" /><strong>{resource.name}</strong><span data-i18n data-en="Preview temporarily unavailable" data-es="Preview no disponible temporalmente">Preview temporarily unavailable</span></div>
+              <img data-screenshot src={screenshotUrl} alt={`Screenshot of the ${resource.name} website`} loading="eager" decoding="async" referrerpolicy="no-referrer" />
+            </div>
+            <figcaption><span data-i18n data-en="Dark-mode capture" data-es="Captura en modo oscuro">Dark-mode capture</span><a href={resource.url} target="_blank" rel="noreferrer">{new URL(resource.url).hostname} ↗</a></figcaption>
+          </figure>
+        </section>
+      </div>
+
+      <div class="detail-layout">
+        <article class="detail-content">
+          <section class="content-section" aria-labelledby="about-resource">
+            <p class="section-kicker">// THE_SHORT_VERSION</p>
+            <h2 id="about-resource" data-i18n data-en={`What is ${resource.name}?`} data-es={`¿Qué es ${resource.name}?`}>What is {resource.name}?</h2>
+            {detail.longDescription.en.map((paragraph, index) => <p data-i18n data-en={paragraph} data-es={detail.longDescription.es[index]}>{paragraph}</p>)}
+          </section>
+
+          <section class="content-section" aria-labelledby="use-cases">
+            <p class="section-kicker">// WHEN_IT_FITS</p>
+            <h2 id="use-cases" data-i18n data-en="Practical use cases" data-es="Casos de uso prácticos">Practical use cases</h2>
+            <div class="use-case-grid">
+              {detail.useCases.en.map((useCase, index) => (
+                <div class="use-case"><span>0{index + 1}</span><p data-i18n data-en={useCase} data-es={detail.useCases.es[index]}>{useCase}</p></div>
+              ))}
+            </div>
+          </section>
+
+          <section class="content-section example-section" aria-labelledby="example-title">
+            <p class="section-kicker">// TRY_THIS_FIRST</p>
+            <h2 id="example-title" data-i18n data-en={detail.exampleTitle.en} data-es={detail.exampleTitle.es}>{detail.exampleTitle.en}</h2>
+            <ol class="example-steps">
+              {detail.exampleSteps.en.map((step, index) => (
+                <li><span>{index + 1}</span><p data-i18n data-en={step} data-es={detail.exampleSteps.es[index]}>{step}</p></li>
+              ))}
+            </ol>
+          </section>
+
+          <section class="content-section" aria-labelledby="before-choosing">
+            <p class="section-kicker">// READ_BEFORE_USING</p>
+            <h2 id="before-choosing" data-i18n data-en="What to check before committing" data-es="Qué revisar antes de elegirlo">What to check before committing</h2>
+            <div class="caveat-list">
+              {detail.caveats.en.map((caveat, index) => <p data-i18n data-en={caveat} data-es={detail.caveats.es[index]}>{caveat}</p>)}
+            </div>
+          </section>
+        </article>
+
+        <aside class="fact-panel">
+          <p class="section-kicker">// FREE_PLAN_AT_A_GLANCE</p>
+          <div class:list={["access-badge", { "is-trial": resource.accessRequirement === "trial-only", "is-card-required": resource.accessRequirement === "card-for-full-limits" }]} data-i18n data-en={accessLabel.en} data-es={accessLabel.es}>{accessLabel.en}</div>
+          <div class="free-allowance"><span data-i18n data-en="Included at no cost" data-es="Incluido sin coste">Included at no cost</span><p data-i18n data-en={resource.freeTier.en} data-es={resource.freeTier.es}>{resource.freeTier.en}</p></div>
+          <dl>
+            <div><dt data-i18n data-en="Best for" data-es="Ideal para">Best for</dt><dd data-i18n data-en={detail.idealFor.en} data-es={detail.idealFor.es}>{detail.idealFor.en}</dd></div>
+            <div><dt data-i18n data-en="Category" data-es="Categoría">Category</dt><dd data-i18n data-en={category.name.en} data-es={category.name.es}>{category.name.en}</dd></div>
+            <div><dt data-i18n data-en="Last reviewed" data-es="Última revisión">Last reviewed</dt><dd data-i18n data-en={reviewedDate} data-es={reviewedDateEs}>{reviewedDate}</dd></div>
+          </dl>
+          <div class="fact-tags">{resource.tags.map((tag) => <span>{tag}</span>)}</div>
+          <a href={resource.pricingUrl} target="_blank" rel="noreferrer"><span data-i18n data-en="Check current pricing" data-es="Comprobar precios actuales">Check current pricing</span> ↗</a>
+        </aside>
+      </div>
+
+      <section class="related-section" aria-labelledby="related-title">
+        <div class="section-heading-compact">
+          <div><p class="section-kicker">// KEEP_EXPLORING</p><h2 id="related-title" data-i18n data-en={`Alternatives to ${resource.name}`} data-es={`Alternativas a ${resource.name}`}>Alternatives to {resource.name}</h2></div>
+          <a href={`/#directory`} data-i18n data-en="View the whole category →" data-es="Ver toda la categoría →">View the whole category →</a>
+        </div>
+        <div class="related-grid">
+          {relatedResources.map((related) => (
+            <article class="related-card">
+              <div><img src={getResourceFaviconUrl(related)} alt="" width="28" height="28" referrerpolicy="no-referrer" /><CategoryIcon name={category.icon} size={18} /></div>
+              <h3>{related.name}</h3>
+              <p data-i18n data-en={related.description.en} data-es={related.description.es}>{related.description.en}</p>
+              <div>{related.tags.slice(0, 2).map((tag) => <span>{tag}</span>)}</div>
+              <a href={`/tools/${related.slug}`} aria-label={`Read about ${related.name}`}></a>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer detail-footer">
+      <a class="brand footer-brand" href="/"><LogoMark /><span class="brand-name">it's free<span>*</span></span></a>
+      <div class="footer-signature"><p data-i18n data-en="Independent notes about genuinely useful free plans." data-es="Notas independientes sobre planes gratuitos realmente útiles.">Independent notes about genuinely useful free plans.</p><p data-i18n data-en="Always confirm limits with the provider before production use." data-es="Confirma siempre los límites con el proveedor antes de usarlo en producción.">Always confirm limits with the provider before production use.</p></div>
+      <a class="footer-directory-link" href="/#directory" data-i18n data-en="Explore all resources →" data-es="Explorar todos los recursos →">Explore all resources →</a>
+    </footer>
+  </div>
+
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  <script>
+    const root = document.documentElement
+    const languageToggle = document.querySelector<HTMLButtonElement>("#language-toggle")!
+    const themeToggle = document.querySelector<HTMLButtonElement>("#theme-toggle")!
+
+    function applyLocale(locale: "en" | "es") {
+      root.lang = locale
+      document.querySelectorAll<HTMLElement>("[data-i18n]").forEach((element) => {
+        const translation = locale === "es" ? element.dataset.es : element.dataset.en
+        if (translation) element.textContent = translation
+      })
+      languageToggle.textContent = locale === "es" ? "EN" : "ES"
+      languageToggle.setAttribute("aria-label", locale === "es" ? "Switch to English" : "Cambiar a español")
+      try { localStorage.setItem("itsfree-locale", locale) } catch {}
+    }
+
+    function applyTheme(theme: "light" | "dark") {
+      root.dataset.theme = theme
+      themeToggle.setAttribute("aria-label", theme === "dark" ? "Use light theme" : "Use dark theme")
+      try { localStorage.setItem("itsfree-theme", theme) } catch {}
+    }
+
+    languageToggle.addEventListener("click", () => applyLocale(root.lang === "es" ? "en" : "es"))
+    themeToggle.addEventListener("click", () => applyTheme(root.dataset.theme === "light" ? "dark" : "light"))
+    document.querySelectorAll<HTMLImageElement>("[data-screenshot]").forEach((image) => image.addEventListener("error", () => image.classList.add("is-unavailable")))
+    applyLocale(root.lang === "es" ? "es" : "en")
+    applyTheme(root.dataset.theme === "light" ? "light" : "dark")
+  </script>
+</Layout>

@@ -1,0 +1,63 @@
+---
+import resourcesData from "../data/resources.json"
+
+const { sections } = resourcesData
+---
+
+<nav
+  class="w-64 bg-white border-r border-gray-200 h-screen sticky top-0 overflow-y-auto"
+>
+  <div class="p-6 border-b border-gray-200">
+    <h1 class="text-xl font-bold text-black">Dev Resources</h1>
+    <p class="text-sm text-gray-600 mt-1">
+      Recursos gratuitos para desarrolladores
+    </p>
+  </div>
+
+  <div class="py-4">
+    {
+      sections.map((section) => (
+        <div class="nav-item" data-section={section.id}>
+          <span class="text-lg">{section.emoji}</span>
+          <span class="font-medium">{section.name}</span>
+          <span class="ml-auto text-xs text-gray-400">
+            {section.resources.length}
+          </span>
+        </div>
+      ))
+    }
+  </div>
+</nav>
+
+<script>
+  // Handle navigation clicks
+  document.addEventListener("DOMContentLoaded", () => {
+    const navItems = document.querySelectorAll("[data-section]")
+
+    navItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        // Remove active class from all items
+        navItems.forEach((nav) => nav.classList.remove("active"))
+        // Add active class to clicked item
+        item.classList.add("active")
+
+        // Get section data
+        const sectionId = item.getAttribute("data-section")
+        const event = new CustomEvent("sectionChange", {
+          detail: { sectionId },
+        })
+        document.dispatchEvent(event)
+      })
+    })
+
+    // Set first item as active by default
+    if (navItems.length > 0) {
+      navItems[0].classList.add("active")
+      const firstSectionId = navItems[0].getAttribute("data-section")
+      const event = new CustomEvent("sectionChange", {
+        detail: { sectionId: firstSectionId },
+      })
+      document.dispatchEvent(event)
+    }
+  })
+</script>

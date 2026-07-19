@@ -1,0 +1,283 @@
+{
+  "sections": [
+    {
+      "id": "cloud",
+      "name": "Cloud",
+      "emoji": "☁️",
+      "resources": [
+        {
+          "name": "Vercel",
+          "description": "Deploy web projects with zero configuration",
+          "url": "https://vercel.com",
+          "tags": ["deployment", "hosting", "serverless"]
+        },
+        {
+          "name": "Netlify",
+          "description": "Build, deploy, and manage modern web projects",
+          "url": "https://netlify.com",
+          "tags": ["deployment", "hosting", "jamstack"]
+        },
+        {
+          "name": "Railway",
+          "description": "Deploy code with zero configuration",
+          "url": "https://railway.app",
+          "tags": ["deployment", "hosting", "databases"]
+        },
+        {
+          "name": "Render",
+          "description": "Cloud platform for developers and teams",
+          "url": "https://render.com",
+          "tags": ["deployment", "hosting", "databases"]
+        }
+      ]
+    },
+    {
+      "id": "apis",
+      "name": "APIs",
+      "emoji": "🔌",
+      "resources": [
+        {
+          "name": "JSONPlaceholder",
+          "description": "Free fake API for testing and prototyping",
+          "url": "https://jsonplaceholder.typicode.com",
+          "tags": ["testing", "mock", "json"]
+        },
+        {
+          "name": "Public APIs",
+          "description": "Collective list of free APIs",
+          "url": "https://publicapis.dev",
+          "tags": ["directory", "free", "collection"]
+        },
+        {
+          "name": "REST Countries",
+          "description": "Get information about countries via REST API",
+          "url": "https://restcountries.com",
+          "tags": ["countries", "geography", "data"]
+        },
+        {
+          "name": "OpenWeatherMap",
+          "description": "Weather data and forecasts API",
+          "url": "https://openweathermap.org/api",
+          "tags": ["weather", "forecast", "climate"]
+        }
+      ]
+    },
+    {
+      "id": "hosting",
+      "name": "Hosting",
+      "emoji": "🌐",
+      "resources": [
+        {
+          "name": "GitHub Pages",
+          "description": "Host static websites directly from GitHub",
+          "url": "https://pages.github.com",
+          "tags": ["static", "github", "free"]
+        },
+        {
+          "name": "Surge.sh",
+          "description": "Static web publishing for front-end developers",
+          "url": "https://surge.sh",
+          "tags": ["static", "cli", "simple"]
+        },
+        {
+          "name": "Firebase Hosting",
+          "description": "Fast and secure web hosting",
+          "url": "https://firebase.google.com/products/hosting",
+          "tags": ["google", "cdn", "ssl"]
+        },
+        {
+          "name": "Cloudflare Pages",
+          "description": "JAMstack platform for frontend developers",
+          "url": "https://pages.cloudflare.com",
+          "tags": ["jamstack", "cdn", "edge"]
+        }
+      ]
+    },
+    {
+      "id": "ci",
+      "name": "CI",
+      "emoji": "🔄",
+      "resources": [
+        {
+          "name": "GitHub Actions",
+          "description": "Automate workflows directly in GitHub",
+          "url": "https://github.com/features/actions",
+          "tags": ["automation", "github", "workflows"]
+        },
+        {
+          "name": "GitLab CI/CD",
+          "description": "Built-in continuous integration and deployment",
+          "url": "https://docs.gitlab.com/ee/ci/",
+          "tags": ["gitlab", "pipelines", "devops"]
+        },
+        {
+          "name": "CircleCI",
+          "description": "Continuous integration and delivery platform",
+          "url": "https://circleci.com",
+          "tags": ["automation", "testing", "deployment"]
+        },
+        {
+          "name": "Travis CI",
+          "description": "Test and deploy with confidence",
+          "url": "https://travis-ci.org",
+          "tags": ["testing", "deployment", "automation"]
+        }
+      ]
+    },
+    {
+      "id": "cd",
+      "name": "CD",
+      "emoji": "🚀",
+      "resources": [
+        {
+          "name": "Vercel",
+          "description": "Automatic deployments for every push",
+          "url": "https://vercel.com",
+          "tags": ["deployment", "automatic", "preview"]
+        },
+        {
+          "name": "Netlify Deploy",
+          "description": "Continuous deployment made simple",
+          "url": "https://netlify.com",
+          "tags": ["deployment", "git", "automatic"]
+        },
+        {
+          "name": "Heroku",
+          "description": "Build, run, and operate applications entirely in the cloud",
+          "url": "https://heroku.com",
+          "tags": ["deployment", "cloud", "scaling"]
+        },
+        {
+          "name": "DigitalOcean App Platform",
+          "description": "Build, deploy, and scale apps quickly",
+          "url": "https://digitalocean.com/products/app-platform",
+          "tags": ["deployment", "scaling", "containers"]
+        }
+      ]
+    },
+    {
+      "id": "performance",
+      "name": "Performance",
+      "emoji": "⚡",
+      "resources": [
+        {
+          "name": "PageSpeed Insights",
+          "description": "Analyze and optimize web page performance",
+          "url": "https://pagespeed.web.dev",
+          "tags": ["analysis", "optimization", "google"]
+        },
+        {
+          "name": "GTmetrix",
+          "description": "Website performance testing and monitoring",
+          "url": "https://gtmetrix.com",
+          "tags": ["testing", "monitoring", "analysis"]
+        },
+        {
+          "name": "WebPageTest",
+          "description": "Test website performance from multiple locations",
+          "url": "https://webpagetest.org",
+          "tags": ["testing", "global", "detailed"]
+        },
+        {
+          "name": "Lighthouse",
+          "description": "Automated auditing for web apps",
+          "url": "https://developers.google.com/web/tools/lighthouse",
+          "tags": ["audit", "pwa", "accessibility"]
+        }
+      ]
+    },
+    {
+      "id": "email",
+      "name": "Email",
+      "emoji": "📧",
+      "resources": [
+        {
+          "name": "EmailJS",
+          "description": "Send emails directly from client-side JavaScript",
+          "url": "https://emailjs.com",
+          "tags": ["client-side", "javascript", "forms"]
+        },
+        {
+          "name": "Mailgun",
+          "description": "Email API service for developers",
+          "url": "https://mailgun.com",
+          "tags": ["api", "transactional", "delivery"]
+        },
+        {
+          "name": "SendGrid",
+          "description": "Email delivery and marketing platform",
+          "url": "https://sendgrid.com",
+          "tags": ["delivery", "marketing", "analytics"]
+        },
+        {
+          "name": "Resend",
+          "description": "Email API for developers",
+          "url": "https://resend.com",
+          "tags": ["api", "developer-friendly", "modern"]
+        }
+      ]
+    },
+    {
+      "id": "search",
+      "name": "Search",
+      "emoji": "🔍",
+      "resources": [
+        {
+          "name": "Algolia",
+          "description": "Fast, reliable search and discovery",
+          "url": "https://algolia.com",
+          "tags": ["search", "instant", "analytics"]
+        },
+        {
+          "name": "Elasticsearch",
+          "description": "Distributed search and analytics engine",
+          "url": "https://elastic.co",
+          "tags": ["search", "analytics", "distributed"]
+        },
+        {
+          "name": "MeiliSearch",
+          "description": "Lightning fast search engine",
+          "url": "https://meilisearch.com",
+          "tags": ["search", "fast", "typo-tolerant"]
+        },
+        {
+          "name": "Typesense",
+          "description": "Fast, typo-tolerant search engine",
+          "url": "https://typesense.org",
+          "tags": ["search", "typo-tolerant", "open-source"]
+        }
+      ]
+    },
+    {
+      "id": "databases",
+      "name": "Databases",
+      "emoji": "🗄️",
+      "resources": [
+        {
+          "name": "Supabase",
+          "description": "Open source Firebase alternative",
+          "url": "https://supabase.com",
+          "tags": ["postgresql", "realtime", "auth"]
+        },
+        {
+          "name": "PlanetScale",
+          "description": "Serverless MySQL platform",
+          "url": "https://planetscale.com",
+          "tags": ["mysql", "serverless", "branching"]
+        },
+        {
+          "name": "MongoDB Atlas",
+          "description": "Cloud database service",
+          "url": "https://mongodb.com/atlas",
+          "tags": ["nosql", "cloud", "document"]
+        },
+        {
+          "name": "Neon",
+          "description": "Serverless PostgreSQL",
+          "url": "https://neon.tech",
+          "tags": ["postgresql", "serverless", "branching"]
+        }
+      ]
+    }
+  ]
+}

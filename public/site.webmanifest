@@ -1,0 +1,16 @@
+{
+  "name": "it's free* — Free tools for developers",
+  "short_name": "it's free*",
+  "description": "A curated directory of genuinely useful free developer tools.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090a0c",
+  "theme_color": "#090a0c",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
