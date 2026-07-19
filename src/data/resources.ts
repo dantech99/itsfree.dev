@@ -122,6 +122,8 @@ const pricingUrls: Record<string, string> = {
   "Figma": "https://www.figma.com/pricing/",
   "Canva": "https://www.canva.com/pricing/",
   "Excalidraw": "https://plus.excalidraw.com/pricing",
+  "Penpot": "https://penpot.app/pricing",
+  "tldraw": "https://tldraw.dev/pricing",
   "Fontshare": "https://www.fontshare.com/licenses/itf-ffl",
   "GitGuardian": "https://www.gitguardian.com/pricing",
   "Socket": "https://socket.dev/pricing",
@@ -176,7 +178,7 @@ const resourceCatalog: Omit<Resource, "slug" | "pricingUrl" | "freeTier" | "acce
   { name: "Cerebras", url: "https://cloud.cerebras.ai", faviconFile: "cloud.cerebras.ai.svg", category: "ai", tags: ["inference", "api", "low latency"], description: { en: "Run open AI models through an OpenAI-compatible API optimized for very fast inference.", es: "Ejecuta modelos abiertos mediante una API compatible con OpenAI optimizada para inferencia muy rápida." } },
   { name: "Groq", url: "https://console.groq.com", faviconFile: "console.groq.com.svg", category: "ai", featured: true, tags: ["inference", "api", "low latency"], description: { en: "Build with fast hosted inference for open models through an OpenAI-compatible API.", es: "Desarrolla con inferencia rápida de modelos abiertos mediante una API compatible con OpenAI." } },
   { name: "Mistral AI", url: "https://console.mistral.ai", faviconFile: "console.mistral.ai.svg", category: "ai", tags: ["models", "api", "europe"], description: { en: "Access Mistral's language, code, embedding and multimodal models through its developer API.", es: "Accede a los modelos de lenguaje, código, embeddings y multimodales de Mistral mediante su API." } },
-  { name: "Cloudflare Workers AI", url: "https://developers.cloudflare.com/workers-ai/", faviconFile: "cloudflare.com.png", category: "ai", tags: ["serverless", "edge", "models"], description: { en: "Run serverless open-source AI models on Cloudflare's global GPU network.", es: "Ejecuta modelos de IA open source de forma serverless en la red global de GPU de Cloudflare." } },
+  { name: "Cloudflare Workers AI", url: "https://developers.cloudflare.com/workers-ai/", faviconFile: "cloudflare.com.webp", category: "ai", tags: ["serverless", "edge", "models"], description: { en: "Run serverless open-source AI models on Cloudflare's global GPU network.", es: "Ejecuta modelos de IA open source de forma serverless en la red global de GPU de Cloudflare." } },
   { name: "Freebuff", url: "https://freebuff.com/", faviconFile: "freebuff.com.svg", category: "ai", featured: true, tags: ["coding agent", "cli", "app builder"], description: { en: "A free, ad-supported coding agent available in the terminal, browser and cloud workspaces.", es: "Agente de programación gratuito financiado con anuncios, disponible en terminal, navegador y workspaces cloud." } },
   { name: "OpenRouter", url: "https://openrouter.ai/models?q=free", category: "ai", tags: ["llm", "gateway", "models"], description: { en: "One API for many language models, including a rotating selection of free models.", es: "Una API para muchos LLM, incluida una selección cambiante de modelos gratis." } },
   { name: "Keywords AI", url: "https://keywordsai.co", category: "ai", tags: ["gateway", "monitoring", "llm"], description: { en: "Call and monitor many language models through one consistent interface.", es: "Usa y monitoriza muchos modelos de lenguaje desde una interfaz común." } },
@@ -245,6 +247,8 @@ const resourceCatalog: Omit<Resource, "slug" | "pricingUrl" | "freeTier" | "acce
   { name: "Figma", url: "https://www.figma.com", category: "design", featured: true, tags: ["ui", "prototype", "collaboration"], description: { en: "Collaborative interface design, prototyping and developer handoff.", es: "Diseño de interfaces, prototipado y handoff colaborativo." } },
   { name: "Canva", url: "https://canva.com", category: "design", tags: ["graphics", "templates", "visual"], description: { en: "Create visual assets quickly with templates and browser-based editing.", es: "Crea recursos visuales rápidamente con plantillas y edición en el navegador." } },
   { name: "Excalidraw", url: "https://excalidraw.com", category: "design", tags: ["whiteboard", "diagrams", "sketch"], description: { en: "A delightful hand-drawn canvas for diagrams and collaborative sketches.", es: "Un lienzo estilo boceto para diagramas y trabajo colaborativo." } },
+  { name: "Penpot", url: "https://penpot.app", faviconFile: "https://penpot.app/favicon.ico", category: "design", tags: ["ui", "prototype", "open source"], description: { en: "Open-source interface design and prototyping with real-time collaboration and developer handoff.", es: "Diseño de interfaces y prototipado open source con colaboración en tiempo real y handoff para desarrollo." } },
+  { name: "tldraw", url: "https://www.tldraw.com", faviconFile: "https://www.tldraw.com/favicon.ico", category: "design", tags: ["whiteboard", "infinite canvas", "sdk"], description: { en: "A fast collaborative infinite canvas plus a React SDK for building custom canvas experiences.", es: "Un lienzo infinito colaborativo y rápido, más un SDK de React para crear experiencias de canvas." } },
   { name: "Fontshare", url: "https://www.fontshare.com", category: "design", tags: ["fonts", "typography", "assets"], description: { en: "A growing collection of professional fonts free for personal and commercial use.", es: "Colección de fuentes profesionales gratis para uso personal y comercial." } },
 
   // Security
@@ -286,7 +290,7 @@ export const slugifyResourceName = (name: string) => name
 export const getResourceFaviconUrl = (resource: Pick<Resource, "url" | "faviconFile">) => {
   if (resource.faviconFile?.startsWith("http")) return resource.faviconFile
   const filename = resource.faviconFile
-    ?? `${new URL(resource.url).hostname.replace(/^www\./, "").replace(/[^a-z0-9.-]/gi, "-")}.png`
+    ?? `${new URL(resource.url).hostname.replace(/^www\./, "").replace(/[^a-z0-9.-]/gi, "-")}.webp`
   return `/favicons/${filename}`
 }
 

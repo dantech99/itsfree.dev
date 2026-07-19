@@ -15,6 +15,7 @@ export const accessRequirements: Partial<Record<string, AccessRequirement>> = {
   "Uptime.com": "trial-only",
   "JSONPlaceholder": "no-signup",
   "Excalidraw": "no-signup",
+  "tldraw": "no-signup",
   "Fontshare": "no-signup",
   "Mozilla Observatory": "no-signup",
   "Have I Been Pwned": "no-signup",
@@ -114,6 +115,8 @@ export const freeTiers: Record<string, LocalizedFreeTier> = {
   "Figma": { en: "Starter: unlimited drafts, UI kits and collaborators, with 3 collaborative design files and 3 FigJam files.", es: "Starter: borradores, kits y colaboradores ilimitados, con 3 archivos de diseño y 3 de FigJam compartidos." },
   "Canva": { en: "Free: 250k+ templates, 1M+ stock assets, 5 GB cloud storage and standard design tools.", es: "Gratis: más de 250.000 plantillas, 1 M de recursos, 5 GB de storage y herramientas de diseño estándar." },
   "Excalidraw": { en: "The core whiteboard is free and open source with unlimited local drawings; paid Plus adds cloud collaboration.", es: "La pizarra base es gratis y open source con dibujos locales ilimitados; Plus añade colaboración cloud." },
+  "Penpot": { en: "Professional: $0 with up to 8 team members, unlimited viewers and files, 10 GB storage and 7-day version history.", es: "Professional: 0 $ con hasta 8 miembros, viewers y archivos ilimitados, 10 GB y 7 días de historial." },
+  "tldraw": { en: "The multiplayer web whiteboard is free; the SDK is free in development and offers a 100-day production trial or hobby license.", es: "La pizarra web multijugador es gratis; el SDK es gratuito en desarrollo y ofrece 100 días de prueba en producción o licencia hobby." },
   "Fontshare": { en: "All fonts are free for personal and commercial use under Fontshare's license; no account is required.", es: "Todas las fuentes son gratis para uso personal y comercial bajo su licencia; no hace falta cuenta." },
 
   "GitGuardian": { en: "Free: secret scanning for individual developers, up to 25 developers and 100 incidents/month.", es: "Gratis: escaneo de secretos para developers individuales, hasta 25 developers y 100 incidentes/mes." },
