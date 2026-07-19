@@ -1,0 +1,28 @@
+---
+import Layout from "../layouts/Layout.astro"
+import LogoMark from "../components/LogoMark.astro"
+import "../styles/error.css"
+---
+
+<Layout
+  title="Page not found — it's free*"
+  description="The requested page could not be found. Return to the itsfree.dev directory."
+  noindex
+>
+  <main class="error-page">
+    <a class="brand" href="/" aria-label="Return to itsfree.dev">
+      <LogoMark />
+      <span class="brand-name">it's free<span>*</span></span>
+    </a>
+
+    <section aria-labelledby="error-title">
+      <p class="section-kicker">// ERROR_404</p>
+      <h1 id="error-title">Lost in the <span>free tier.</span></h1>
+      <p>Page not found. La página que buscas no existe o ha cambiado de dirección.</p>
+      <a class="error-page-link" href="/">
+        <span>Back to the directory · Volver al directorio</span>
+        <span aria-hidden="true">→</span>
+      </a>
+    </section>
+  </main>
+</Layout>
