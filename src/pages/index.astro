@@ -228,14 +228,12 @@ const homeStructuredData = {
                     <div class="card-topline">
                       <span class="resource-logo" aria-hidden="true">
                         <span class="resource-initials">{initials}</span>
-                        <img src={faviconUrl} alt="" width="24" height="24" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+                        <img src={faviconUrl} alt="" width="28" height="28" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
                       </span>
+                      <h3>{resource.name}</h3>
+                      <a class="card-arrow card-external-link" href={resource.url} target="_blank" rel="noreferrer" aria-label={`Open ${resource.name} website`}>↗</a>
                     </div>
                     <div class="card-body">
-                      <div class="card-title-row">
-                        <h3>{resource.name}</h3>
-                        <a class="card-arrow card-external-link" href={resource.url} target="_blank" rel="noreferrer" aria-label={`Open ${resource.name} website`}>↗</a>
-                      </div>
                       <p data-i18n data-en={resource.description.en} data-es={resource.description.es}>{resource.description.en}</p>
                       <div class="free-tier">
                         <span
