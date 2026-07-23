@@ -55,10 +55,16 @@
           "tags": ["countries", "geography", "data"]
         },
         {
-          "name": "OpenWeatherMap",
-          "description": "Weather data and forecasts API",
-          "url": "https://openweathermap.org/api",
-          "tags": ["weather", "forecast", "climate"]
+          "name": "Open-Meteo",
+          "description": "Global weather forecasts API with no API key",
+          "url": "https://open-meteo.com",
+          "tags": ["weather", "forecast", "open data"]
+        },
+        {
+          "name": "OpenGraph.to",
+          "description": "Free Open Graph API: scrape OG tags, score and suggestions",
+          "url": "https://www.opengraph.to",
+          "tags": ["open graph", "seo", "social"]
         }
       ]
     },

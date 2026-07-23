@@ -14,6 +14,8 @@ export const accessRequirements: Partial<Record<string, AccessRequirement>> = {
   "Pollinations.AI": "no-signup",
   "Uptime.com": "trial-only",
   "JSONPlaceholder": "no-signup",
+  "Open-Meteo": "no-signup",
+  "OpenGraph.to": "no-signup",
   "Excalidraw": "no-signup",
   "tldraw": "no-signup",
   "Fontshare": "no-signup",
@@ -103,6 +105,8 @@ export const freeTiers: Record<string, LocalizedFreeTier> = {
   "Amplitude": { en: "Starter: up to 50k monthly tracked users with core analytics, session replay and feature flags.", es: "Starter: hasta 50.000 usuarios medidos/mes con analítica base, session replay y feature flags." },
   "Google Analytics": { en: "Standard Google Analytics is free for most sites and apps; enterprise-scale Analytics 360 is paid.", es: "Google Analytics estándar es gratis para la mayoría de webs y apps; Analytics 360 enterprise es de pago." },
   "Umami": { en: "Free cloud plan: up to 3 websites, 100k events/month and 6-month retention; self-hosting is unlimited.", es: "Cloud gratis: hasta 3 webs, 100.000 eventos/mes y 6 meses de retención; self-hosted es ilimitado." },
+  "Ahrefs Web Analytics": { en: "Free with Ahrefs Free: up to 1M events/month per verified project, unlimited sites, cookie-free tracking; no card required.", es: "Gratis con Ahrefs Free: hasta 1 M de eventos/mes por proyecto verificado, sitios ilimitados y tracking sin cookies; sin tarjeta." },
+  "Cloudflare Web Analytics": { en: "Completely free privacy-first analytics for any site: no cookies, no personal data collection and no traffic cap on the free product.", es: "Analítica privacy-first totalmente gratis para cualquier web: sin cookies, sin datos personales y sin tope de tráfico en el producto gratis." },
   "Microsoft Clarity": { en: "Completely free: unlimited projects, heatmaps and session recordings with no traffic cap.", es: "Totalmente gratis: proyectos, mapas de calor y grabaciones ilimitados, sin límite de tráfico." },
   "Axiom": { en: "Free: 500 GB-hours of query time and 25 GB ingest/month, with 30-day retention.", es: "Gratis: 500 GB-horas de consulta y 25 GB de ingesta/mes, con 30 días de retención." },
 
@@ -112,6 +116,8 @@ export const freeTiers: Record<string, LocalizedFreeTier> = {
   "Abstract API": { en: "Free API keys with product-specific monthly quotas; common APIs include limited requests for testing.", es: "API keys gratis con cuotas mensuales según el producto; las APIs comunes incluyen peticiones limitadas para pruebas." },
   "IPinfo": { en: "Free Lite API: unlimited IP geolocation requests for country, continent and ASN data.", es: "API Lite gratis: peticiones de geolocalización IP ilimitadas para país, continente y ASN." },
   "JSONPlaceholder": { en: "Completely free public fake REST API: 6 common resources; writes are simulated and not persisted.", es: "API REST falsa pública y gratis: 6 recursos habituales; las escrituras se simulan y no se guardan." },
+  "Open-Meteo": { en: "Open-Access free API with no sign-up or key for non-commercial use: 600 calls/min, 5,000/hour, 10,000/day and 300,000/month.", es: "API Open-Access gratis sin registro ni clave para uso no comercial: 600 llamadas/min, 5.000/hora, 10.000/día y 300.000/mes." },
+  "OpenGraph.to": { en: "Free public API with no sign-up or key: 10 requests/hour per IP, JSON responses with a 5-minute cache.", es: "API pública gratis sin registro ni clave: 10 peticiones/hora por IP, respuestas JSON con caché de 5 minutos." },
   "Hoppscotch": { en: "The web client and self-hosted Community Edition are free; cloud collaboration has a free personal workspace.", es: "El cliente web y Community self-hosted son gratis; el cloud incluye un workspace personal gratuito." },
 
   "Figma": { en: "Starter: unlimited drafts, UI kits and collaborators, with 3 collaborative design files and 3 FigJam files.", es: "Starter: borradores, kits y colaboradores ilimitados, con 3 archivos de diseño y 3 de FigJam compartidos." },

@@ -206,6 +206,33 @@ posthog.capture("project_created", {
   template: "astro",
 })`,
   },
+  "ahrefs-web-analytics": {
+    title: { en: "Install the Ahrefs tracking snippet", es: "Instala el snippet de tracking de Ahrefs" },
+    description: { en: "Load the cookie-free analytics script after verifying site ownership.", es: "Carga el script de analítica sin cookies tras verificar la propiedad del sitio." },
+    filename: "analytics.ts",
+    lang: "javascript",
+    code: `// Add in <head> (or inject once on the client).
+// Get data-key from your Ahrefs Web Analytics project settings.
+const script = document.createElement("script")
+script.src = "https://analytics.ahrefs.com/analytics.js"
+script.dataset.key = import.meta.env.PUBLIC_AHREFS_ANALYTICS_KEY
+script.async = true
+document.head.appendChild(script)`,
+  },
+  "cloudflare-web-analytics": {
+    title: { en: "Add Cloudflare Web Analytics", es: "Añade Cloudflare Web Analytics" },
+    description: { en: "Drop in the beacon script; no cookies and no personal data collection.", es: "Incluye el script beacon; sin cookies ni recogida de datos personales." },
+    filename: "analytics.ts",
+    lang: "javascript",
+    code: `// Token from dash.cloudflare.com → Analytics & logs → Web Analytics
+const script = document.createElement("script")
+script.defer = true
+script.src = "https://static.cloudflareinsights.com/beacon.min.js"
+script.dataset.cfBeacon = JSON.stringify({
+  token: import.meta.env.PUBLIC_CF_WEB_ANALYTICS_TOKEN,
+})
+document.head.appendChild(script)`,
+  },
   "github-actions": {
     title: { en: "Check every pull request", es: "Comprueba cada pull request" },
     description: { en: "Install, test and build with a minimal GitHub Actions workflow.", es: "Instala, prueba y compila con un workflow mínimo de GitHub Actions." },
@@ -241,6 +268,54 @@ if (!response.ok) throw new Error("Could not load posts")
 
 const posts = await response.json()
 console.log(posts)`,
+  },
+  "open-meteo": {
+    title: { en: "Get the current weather", es: "Consulta el tiempo actual" },
+    description: { en: "Call the free Forecast API without an API key or account.", es: "Llama a la API Forecast gratis sin API key ni cuenta." },
+    filename: "weather.ts",
+    lang: "javascript",
+    code: `const params = new URLSearchParams({
+  latitude: "40.42",
+  longitude: "-3.70",
+  current: "temperature_2m,weather_code,wind_speed_10m",
+  hourly: "temperature_2m,precipitation_probability",
+  timezone: "auto",
+})
+
+const response = await fetch(
+  \`https://api.open-meteo.com/v1/forecast?\${params}\`,
+)
+
+if (!response.ok) throw new Error("Could not load weather")
+
+const weather = await response.json()
+console.log(weather.current.temperature_2m)`,
+  },
+  "opengraph-to": {
+    title: { en: "Inspect Open Graph tags", es: "Inspecciona tags Open Graph" },
+    description: { en: "Fetch OG metadata, a quality score and suggested meta tags without an API key.", es: "Obtén metadatos OG, una puntuación de calidad y meta tags sugeridos sin API key." },
+    filename: "og.ts",
+    lang: "javascript",
+    code: `const target = "https://github.com"
+const response = await fetch(
+  \`https://www.opengraph.to/api/v1/og?url=\${encodeURIComponent(target)}\`,
+)
+
+if (response.status === 429) {
+  throw new Error("Rate limit: max 10 requests/hour per IP")
+}
+if (!response.ok) throw new Error("Could not inspect URL")
+
+const og = await response.json()
+
+console.log(og.title)
+console.log(og.description)
+console.log(og.image?.url)
+console.log(og.twitter?.card)
+console.log(og.analysis.score)
+console.log(og.analysis.issues)
+console.log(og.suggestedTags)
+console.log(response.headers.get("X-RateLimit-Remaining"))`,
   },
   tldraw: {
     title: { en: "Embed a tldraw canvas", es: "Integra un canvas de tldraw" },

@@ -140,13 +140,72 @@ const accessCaveats: Record<Resource["accessRequirement"], Record<Locale, string
   "trial-only": { en: "This is a time-limited trial rather than a permanent free tier. Plan an exit or budget before relying on it.", es: "Es una prueba temporal, no una capa gratis permanente. Prepara una salida o presupuesto antes de depender del servicio." },
 }
 
+/** Optional per-resource guides that replace the generic category copy on detail pages. */
+const resourceGuides: Partial<Record<string, LocalizedGuide & { longDescription: Record<Locale, string[]> }>> = {
+  "OpenGraph.to": {
+    overview: {
+      en: "It scrapes any public URL and returns structured Open Graph, Twitter Card and SEO metadata as JSON, plus a quality score and copy-paste meta tags.",
+      es: "Analiza cualquier URL pública y devuelve metadatos Open Graph, Twitter Card y SEO en JSON, junto con una puntuación de calidad y meta tags listos para copiar.",
+    },
+    idealFor: {
+      en: "Link previews, SEO audits, post-deploy checks and social sharing QA",
+      es: "Previews de enlaces, auditorías SEO, checks tras un deploy y QA de compartidos sociales",
+    },
+    useCases: {
+      en: [
+        "Render rich link previews in a chat, CMS or notes app.",
+        "Fail a CI job if the OG score drops below a threshold after deploy.",
+        "Audit title, description and image tags across marketing pages.",
+      ],
+      es: [
+        "Renderizar previews ricos de enlaces en un chat, CMS o app de notas.",
+        "Fallar un job de CI si la puntuación OG baja de un umbral tras el deploy.",
+        "Auditar title, description e imagen en páginas de marketing.",
+      ],
+    },
+    exampleTitle: {
+      en: "Audit OG tags after a deploy",
+      es: "Audita tags OG tras un deploy",
+    },
+    exampleSteps: {
+      en: [
+        "Call GET /api/v1/og with your production URL (or POST the same payload as JSON).",
+        "Read analysis.score and triage analysis.issues by severity.",
+        "Apply suggestedTags or fix the listed issues, then re-check within the 10 req/hour limit.",
+      ],
+      es: [
+        "Llama a GET /api/v1/og con la URL de producción (o envía el mismo payload por POST).",
+        "Revisa analysis.score y prioriza analysis.issues por severidad.",
+        "Aplica suggestedTags o corrige los problemas y vuelve a comprobar respetando el límite de 10 pet/hora.",
+      ],
+    },
+    caveat: {
+      en: "The free API allows only 10 requests per hour per IP, caches results for 5 minutes and is intended for public URLs. High volume needs your own scraper or another provider.",
+      es: "La API gratis permite solo 10 peticiones por hora y por IP, cachea 5 minutos y está pensada para URLs públicas. Para mucho volumen hace falta un scraper propio u otro proveedor.",
+    },
+    longDescription: {
+      en: [
+        "OpenGraph.to exposes a free public endpoint at /api/v1/og that scrapes Open Graph, Twitter Card and SEO metadata from any publicly accessible URL—no API key or account required.",
+        "A successful JSON response includes the normalized url, title, description, siteName, type, locale, favicon, canonical, image (url, width, height, alt), twitter card fields, analysis (score 0–100, summary and issues with severity and fixes) and suggestedTags as copy-paste HTML.",
+        "Rate limits are strict: 10 requests per hour per IP, with X-RateLimit-* headers on every response and a 5-minute response cache. Use it for previews, audits and light automation rather than high-traffic production scraping.",
+      ],
+      es: [
+        "OpenGraph.to ofrece un endpoint público gratis en /api/v1/og que extrae metadatos Open Graph, Twitter Card y SEO de cualquier URL accesible públicamente, sin API key ni cuenta.",
+        "La respuesta JSON incluye la url normalizada, title, description, siteName, type, locale, favicon, canonical, image (url, width, height, alt), campos de Twitter Card, analysis (puntuación 0–100, resumen e issues con severidad y fixes) y suggestedTags como HTML listo para copiar.",
+        "Los límites son estrictos: 10 peticiones por hora y por IP, con cabeceras X-RateLimit-* en cada respuesta y caché de 5 minutos. Sirve para previews, auditorías y automatización ligera, no para scraping de alto tráfico.",
+      ],
+    },
+  },
+}
+
 export function buildResourceDetail(resource: Resource): ResourceDetail {
-  const guide = categoryGuides[resource.category]
+  const guide = resourceGuides[resource.name] ?? categoryGuides[resource.category]
   const topicsEn = resource.tags.slice(0, 3).join(", ")
   const topicsEs = resource.tags.slice(0, 3).join(", ")
+  const custom = resourceGuides[resource.name]
 
   return {
-    longDescription: {
+    longDescription: custom?.longDescription ?? {
       en: [resource.description.en, `${resource.name} is especially relevant for ${topicsEn}. ${guide.overview.en}`, `Its current free offer is concrete enough to test a real workflow: ${resource.freeTier.en}`],
       es: [resource.description.es, `${resource.name} resulta especialmente útil para ${topicsEs}. ${guide.overview.es}`, `Su oferta gratuita actual permite probar un flujo real: ${resource.freeTier.es}`],
     },

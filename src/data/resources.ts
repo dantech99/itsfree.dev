@@ -22,7 +22,7 @@ export interface Resource {
   featured?: boolean
 }
 
-export const sourceReviewedAt = "2026-07-19"
+export const sourceReviewedAt = "2026-07-23"
 
 export const categories: Category[] = [
   { id: "hosting", icon: "cloud-computing", name: { en: "Hosting & deploy", es: "Hosting y deploy" } },
@@ -112,6 +112,8 @@ const pricingUrls: Record<string, string> = {
   "Amplitude": "https://amplitude.com/pricing",
   "Google Analytics": "https://marketingplatform.google.com/about/analytics/compare/",
   "Umami": "https://umami.is/pricing",
+  "Ahrefs Web Analytics": "https://ahrefs.com/web-analytics",
+  "Cloudflare Web Analytics": "https://developers.cloudflare.com/web-analytics/",
   "Microsoft Clarity": "https://clarity.microsoft.com/pricing",
   "Axiom": "https://axiom.co/pricing",
   "Pipedream": "https://pipedream.com/docs/pricing",
@@ -120,6 +122,8 @@ const pricingUrls: Record<string, string> = {
   "Abstract API": "https://www.abstractapi.com/api",
   "IPinfo": "https://ipinfo.io/pricing",
   "JSONPlaceholder": "https://jsonplaceholder.typicode.com/guide/",
+  "Open-Meteo": "https://open-meteo.com/en/pricing",
+  "OpenGraph.to": "https://www.opengraph.to/api",
   "Hoppscotch": "https://hoppscotch.com/pricing",
   "Figma": "https://www.figma.com/pricing/",
   "Canva": "https://www.canva.com/pricing/",
@@ -235,7 +239,9 @@ const resourceCatalog: Omit<Resource, "slug" | "pricingUrl" | "freeTier" | "acce
   { name: "Mixpanel", url: "https://mixpanel.com", category: "analytics", tags: ["product", "funnels", "retention"], description: { en: "Understand product usage through events, funnels, cohorts and retention.", es: "Entiende el uso con eventos, funnels, cohortes y retención." } },
   { name: "Amplitude", url: "https://amplitude.com", category: "analytics", tags: ["product", "journeys", "experiments"], description: { en: "Digital analytics for user journeys, behavior and product experiments.", es: "Analítica digital para journeys, comportamiento y experimentos." } },
   { name: "Google Analytics", url: "https://analytics.google.com", category: "analytics", tags: ["web", "traffic", "google"], description: { en: "Widely supported web and app traffic analytics from Google.", es: "Analítica de tráfico web y apps de Google con gran soporte." } },
-  { name: "Umami", url: "https://umami.is", category: "analytics", tags: ["privacy", "web", "simple"], description: { en: "Clean, privacy-minded website analytics with straightforward reports.", es: "Analítica web limpia y centrada en privacidad con informes sencillos." } },
+  { name: "Umami", url: "https://umami.is", category: "analytics", featured: true, tags: ["privacy", "web", "simple"], description: { en: "Clean, privacy-minded website analytics with straightforward reports.", es: "Analítica web limpia y centrada en privacidad con informes sencillos." } },
+  { name: "Ahrefs Web Analytics", url: "https://ahrefs.com/web-analytics", category: "analytics", featured: true, tags: ["privacy", "web", "cookie-free"], description: { en: "Simple, cookie-free website analytics with AI traffic, funnels and SEO context from Ahrefs.", es: "Analítica web simple y sin cookies, con tráfico de IA, funnels y contexto SEO de Ahrefs." } },
+  { name: "Cloudflare Web Analytics", url: "https://www.cloudflare.com/web-analytics/", faviconFile: "cloudflare.com.webp", category: "analytics", tags: ["privacy", "web", "free"], description: { en: "Privacy-first web analytics from Cloudflare: no cookies, no personal data, free for any site.", es: "Analítica web privacy-first de Cloudflare: sin cookies, sin datos personales y gratis para cualquier web." } },
   { name: "Microsoft Clarity", url: "https://clarity.microsoft.com", category: "analytics", tags: ["heatmaps", "replay", "web"], description: { en: "Free heatmaps and session recordings for understanding website behavior.", es: "Mapas de calor y grabaciones gratis para entender el comportamiento web." } },
   { name: "Axiom", url: "https://axiom.co", category: "analytics", tags: ["events", "logs", "datasets"], description: { en: "Store and explore event data and logs with fast queries and dashboards.", es: "Almacena y explora eventos y logs con consultas rápidas y dashboards." } },
 
@@ -246,6 +252,8 @@ const resourceCatalog: Omit<Resource, "slug" | "pricingUrl" | "freeTier" | "acce
   { name: "Abstract API", url: "https://www.abstractapi.com", category: "api", tags: ["validation", "geolocation", "utilities"], description: { en: "A practical API suite for IP, email, phone and other validation tasks.", es: "Suite de APIs para IP, email, teléfono y otras validaciones habituales." } },
   { name: "IPinfo", url: "https://ipinfo.io", category: "api", tags: ["ip", "geolocation", "network"], description: { en: "IP address data for geolocation, networks, privacy and security use cases.", es: "Datos de IP para geolocalización, redes, privacidad y seguridad." } },
   { name: "JSONPlaceholder", url: "https://jsonplaceholder.typicode.com", category: "api", tags: ["fake api", "rest", "testing"], description: { en: "A dependable fake REST API for examples, tests and quick prototypes.", es: "Una API REST falsa y fiable para ejemplos, pruebas y prototipos." } },
+  { name: "Open-Meteo", url: "https://open-meteo.com", category: "api", tags: ["weather", "forecast", "open data"], description: { en: "Global weather forecasts and historical data through a free JSON API with no API key.", es: "Pronósticos globales e históricos del tiempo mediante una API JSON gratis sin API key." } },
+  { name: "OpenGraph.to", url: "https://www.opengraph.to", faviconFile: "opengraph.to.svg", category: "api", tags: ["open graph", "seo", "social"], description: { en: "Scrape Open Graph, Twitter Card and SEO tags for any public URL: title, description, image, score, issues and suggested meta tags as JSON.", es: "Extrae tags Open Graph, Twitter Card y SEO de cualquier URL pública: título, descripción, imagen, puntuación, problemas y meta tags sugeridos en JSON." } },
   { name: "Hoppscotch", url: "https://hoppscotch.io", category: "api", tags: ["api client", "graphql", "realtime"], description: { en: "A fast web API client for REST, GraphQL and realtime protocols.", es: "Cliente web rápido para APIs REST, GraphQL y protocolos realtime." } },
 
   // Design
