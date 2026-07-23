@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro"
-import { resources, sourceReviewedAt } from "../data/resources"
+import { categories, resources, sourceReviewedAt } from "../data/resources"
 
 const siteUrl = "https://itsfree.dev"
 
@@ -14,6 +14,11 @@ export const GET: APIRoute = () => {
   const pages = [
     { en: siteUrl, es: `${siteUrl}/es`, priority: "1.0" },
     { en: `${siteUrl}/sponsor`, es: `${siteUrl}/es/sponsor`, priority: "0.5" },
+    ...categories.map((category) => ({
+      en: `${siteUrl}/categories/${category.id}`,
+      es: `${siteUrl}/es/categories/${category.id}`,
+      priority: "0.9",
+    })),
     ...resources.map((resource) => ({
       en: `${siteUrl}/tools/${resource.slug}`,
       es: `${siteUrl}/es/tools/${resource.slug}`,

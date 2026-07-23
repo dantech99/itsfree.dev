@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css"
+import { ClientRouter } from "astro:transitions"
 
 export interface Props {
   title: string
@@ -77,8 +78,55 @@ const imageUrl = new URL(image, siteUrl)
         }
       } catch {}
     </script>
+    <ClientRouter fallback="animate" />
   </head>
   <body>
     <slot />
+    <script>
+      let categoryNavigationPending = false
+
+      const syncThemeToggle = () => {
+        const toggle = document.querySelector<HTMLElement>("#theme-toggle")
+        if (!toggle) return
+        toggle.setAttribute("aria-label", document.documentElement.dataset.theme === "light" ? "Use dark theme" : "Use light theme")
+      }
+
+      document.addEventListener("click", (event) => {
+        const target = event.target
+        if (!(target instanceof Element)) return
+
+        if (target.closest("[data-category-navigation]") && event instanceof MouseEvent && event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+          categoryNavigationPending = true
+          return
+        }
+
+        if (!target.closest("#theme-toggle")) return
+
+        const root = document.documentElement
+        const nextTheme = root.dataset.theme === "light" ? "dark" : "light"
+        root.dataset.theme = nextTheme
+        try { localStorage.setItem("itsfree-theme", nextTheme) } catch {}
+        syncThemeToggle()
+      })
+
+      document.addEventListener("astro:after-swap", () => {
+        if (!categoryNavigationPending) return
+
+        const directory = document.querySelector<HTMLElement>("#directory")
+        if (directory) {
+          const root = document.documentElement
+          const previousScrollBehavior = root.style.scrollBehavior
+          const headerHeight = document.querySelector<HTMLElement>(".topbar")?.offsetHeight ?? 0
+          root.style.scrollBehavior = "auto"
+          window.scrollTo(0, window.scrollY + directory.getBoundingClientRect().top - headerHeight)
+          root.style.scrollBehavior = previousScrollBehavior
+        }
+
+        categoryNavigationPending = false
+      })
+
+      document.addEventListener("astro:page-load", syncThemeToggle)
+      syncThemeToggle()
+    </script>
   </body>
 </html>

@@ -68,7 +68,7 @@ const structuredData = {
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: t({ en: "Directory", es: "Directorio" }), item: `https://itsfree.dev${localePrefix || "/"}` },
-        { "@type": "ListItem", position: 2, name: category.name[locale], item: `https://itsfree.dev${localePrefix || "/"}#directory` },
+        { "@type": "ListItem", position: 2, name: category.name[locale], item: `https://itsfree.dev${localePrefix}/categories/${category.id}` },
         { "@type": "ListItem", position: 3, name: resource.name, item: pageUrl },
       ],
     },
@@ -91,7 +91,7 @@ const structuredData = {
 
 <Layout title={t({ en: `${resource.name} free tier & pricing | it's free*`, es: `Plan gratuito y precios de ${resource.name} | it's free*` })} description={pageDescription} locale={locale} canonical={pagePath} alternate={alternateUrl}>
   <div class="site-shell detail-shell">
-    <header class="topbar">
+    <header class="topbar" transition:name="site-header" transition:animate="none">
       <a class="brand" href={localePrefix || "/"} aria-label="it's free home">
         <LogoMark />
         <span class="brand-name">it's free<span>*</span></span>
@@ -145,7 +145,7 @@ const structuredData = {
           <figure class="site-screenshot">
             <div class="browser-chrome" aria-hidden="true"><i></i><i></i><i></i><span>{new URL(resource.url).hostname}</span></div>
             <div class="screenshot-frame">
-              <div class="screenshot-fallback" aria-hidden="true"><img src={faviconUrl} alt="" referrerpolicy="no-referrer" /><strong>{resource.name}</strong><span>{t({ en: "Preview temporarily unavailable", es: "Preview no disponible temporalmente" })}</span></div>
+              <div class="screenshot-fallback" aria-hidden="true"><img src={faviconUrl} alt="" referrerpolicy="no-referrer" /><strong>{resource.name}</strong><span data-preview-status data-error-copy={t({ en: "Preview temporarily unavailable", es: "Preview no disponible temporalmente" })}>{t({ en: "Loading website preview…", es: "Recuperando vista previa…" })}</span></div>
               <img data-screenshot src={screenshotUrl} alt={`Screenshot of the ${resource.name} website`} loading="eager" decoding="async" referrerpolicy="no-referrer" />
             </div>
             <figcaption><span>{t({ en: "Website preview", es: "Vista previa de la web" })}</span><a href={resource.url} target="_blank" rel="noreferrer">{new URL(resource.url).hostname} ↗</a></figcaption>
@@ -248,17 +248,19 @@ const structuredData = {
 
   <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   <script>
-    const root = document.documentElement
-    const themeToggle = document.querySelector<HTMLButtonElement>("#theme-toggle")!
-
-    function applyTheme(theme: "light" | "dark") {
-      root.dataset.theme = theme
-      themeToggle.setAttribute("aria-label", theme === "dark" ? "Use light theme" : "Use dark theme")
-      try { localStorage.setItem("itsfree-theme", theme) } catch {}
+    const initializeScreenshotPreviews = () => {
+      document.querySelectorAll<HTMLImageElement>("[data-screenshot]").forEach((image) => {
+        if (image.dataset.enhanced === "true") return
+        image.dataset.enhanced = "true"
+        image.addEventListener("error", () => {
+          image.classList.add("is-unavailable")
+          const status = image.parentElement?.querySelector<HTMLElement>("[data-preview-status]")
+          if (status?.dataset.errorCopy) status.textContent = status.dataset.errorCopy
+        })
+      })
     }
 
-    themeToggle.addEventListener("click", () => applyTheme(root.dataset.theme === "light" ? "dark" : "light"))
-    document.querySelectorAll<HTMLImageElement>("[data-screenshot]").forEach((image) => image.addEventListener("error", () => image.classList.add("is-unavailable")))
-    applyTheme(root.dataset.theme === "light" ? "light" : "dark")
+    document.addEventListener("astro:page-load", initializeScreenshotPreviews)
+    initializeScreenshotPreviews()
   </script>
 </Layout>

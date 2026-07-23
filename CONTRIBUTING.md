@@ -2,6 +2,8 @@
 
 Thanks for helping keep the directory accurate and useful. Contributions can add a resource, correct an existing free tier, improve translations, fix accessibility issues, or refine the site itself.
 
+itsfree.dev is a curated list, not an exhaustive directory. The goal is not to include every product with a free tier, but to ensure that every listed resource is genuinely useful and worth recommending. Opening a pull request does not guarantee that a resource will be added; submissions are reviewed against the editorial criteria below and may be declined even when they technically offer a free plan.
+
 ## Before contributing
 
 Please search existing issues and pull requests first. For larger interface or architecture changes, open an issue before investing significant work so the direction can be discussed.

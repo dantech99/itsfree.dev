@@ -52,7 +52,7 @@ const sponsorStructuredData = {
   alternate={alternateUrl}
 >
   <div class="site-shell sponsor-page">
-    <header class="topbar">
+    <header class="topbar" transition:name="site-header" transition:animate="none">
       <a class="brand" href={localePrefix || "/"} aria-label="it's free home">
         <LogoMark />
         <span class="brand-name">it's free<span>*</span></span>
@@ -161,14 +161,4 @@ const sponsorStructuredData = {
 
   <script is:inline type="application/ld+json" set:html={JSON.stringify(sponsorStructuredData)} />
 
-  <script>
-    const root = document.documentElement
-    const themeToggle = document.querySelector<HTMLButtonElement>("#theme-toggle")!
-    themeToggle.addEventListener("click", () => {
-      const nextTheme = root.dataset.theme === "light" ? "dark" : "light"
-      root.dataset.theme = nextTheme
-      themeToggle.setAttribute("aria-label", nextTheme === "dark" ? "Use light theme" : "Use dark theme")
-      try { localStorage.setItem("itsfree-theme", nextTheme) } catch {}
-    })
-  </script>
 </Layout>

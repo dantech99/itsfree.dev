@@ -1,0 +1,12 @@
+---
+import HomePage from "../../index.astro"
+import { categories } from "../../../data/resources"
+
+export function getStaticPaths() {
+  return categories.map((category) => ({ params: { slug: category.id }, props: { categoryId: category.id } }))
+}
+
+const { categoryId } = Astro.props
+---
+
+<HomePage locale="es" categoryId={categoryId} />

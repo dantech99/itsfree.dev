@@ -6,19 +6,25 @@ import { categories, getResourceFaviconUrl, resources, sourceReviewedAt } from "
 
 interface Props {
   locale?: "en" | "es"
+  categoryId?: string
 }
 
-const { locale = "en" } = Astro.props as Props
+const { locale = "en", categoryId } = Astro.props as Props
 const t = <T,>(copy: { en: T; es: T }) => copy[locale]
 const localePrefix = locale === "es" ? "/es" : ""
-const alternateUrl = locale === "es" ? "/" : "/es"
+const selectedCategory = categoryId ? categories.find((category) => category.id === categoryId) : undefined
+const pagePath = selectedCategory ? `${localePrefix}/categories/${selectedCategory.id}` : (localePrefix || "/")
+const alternateUrl = selectedCategory
+  ? `${locale === "es" ? "" : "/es"}/categories/${selectedCategory.id}`
+  : locale === "es" ? "/" : "/es"
 const languageSwitchUrl = `/language/${locale === "es" ? "en" : "es"}?redirect=${encodeURIComponent(alternateUrl)}`
 
-const totalResources = resources.length
-const featuredResources = resources.filter((resource) => resource.featured).length
+const pageResources = selectedCategory ? resources.filter((resource) => resource.category === selectedCategory.id) : resources
+const totalResources = pageResources.length
+const featuredResources = pageResources.filter((resource) => resource.featured).length
 const featuredOrder = ["InsForge", "CodeRabbit", "Cloudflare", "Vercel"]
 const featuredRank = new Map(featuredOrder.map((name, index) => [name, index]))
-const sortedResources = [...resources].sort((first, second) => {
+const sortedResources = [...pageResources].sort((first, second) => {
   const featuredDifference = Number(Boolean(second.featured)) - Number(Boolean(first.featured))
   if (featuredDifference !== 0) return featuredDifference
 
@@ -48,10 +54,16 @@ const categoryCounts = new Map(
   ]),
 )
 const siteUrl = "https://itsfree.dev"
-const homeDescription = t({
+const homeDescription = selectedCategory ? t({
+  en: `A curated selection of genuinely useful free ${selectedCategory.name.en.toLowerCase()} tools and services for developers.`,
+  es: `Una selección curada de herramientas y servicios gratis de ${selectedCategory.name.es.toLowerCase()} realmente útiles para developers.`,
+}) : t({
   en: "A curated directory of genuinely useful free developer tools, APIs, hosting, databases, AI models and more.",
   es: "Un directorio seleccionado de herramientas gratuitas realmente útiles para developers: APIs, hosting, bases de datos, modelos de IA y más.",
 })
+const pageTitle = selectedCategory
+  ? t({ en: `Best free ${selectedCategory.name.en} tools for developers`, es: `Mejores herramientas gratis de ${selectedCategory.name.es} para developers` })
+  : t({ en: "it's free* — Free tools for developers", es: "it's free* — Herramientas gratis para developers" })
 const faqEntries = locale === "es" ? [
   {
     question: "¿Todas estas herramientas son completamente gratis?",
@@ -95,22 +107,22 @@ const homeStructuredData = {
       "@id": `${siteUrl}/#website`,
       name: "it's free*",
       alternateName: "itsfree.dev",
-      url: `${siteUrl}${localePrefix || "/"}`,
+      url: siteUrl,
       description: homeDescription,
       inLanguage: locale,
       publisher: { "@type": "Organization", name: "midu.dev", url: "https://midu.dev" },
     },
     {
       "@type": "CollectionPage",
-      "@id": `${siteUrl}${localePrefix || "/"}#directory`,
-      url: `${siteUrl}${localePrefix || "/"}`,
-      name: t({ en: "Free tools for developers", es: "Herramientas gratuitas para developers" }),
+      "@id": `${siteUrl}${pagePath}#directory`,
+      url: `${siteUrl}${pagePath}`,
+      name: pageTitle,
       description: homeDescription,
       dateModified: sourceReviewedAt,
       isPartOf: { "@id": `${siteUrl}/#website` },
       mainEntity: {
         "@type": "ItemList",
-        numberOfItems: resources.length,
+        numberOfItems: pageResources.length,
         itemListElement: sortedResources.map((resource, index) => ({
           "@type": "ListItem",
           position: index + 1,
@@ -132,15 +144,15 @@ const homeStructuredData = {
 ---
 
 <Layout
-  title={t({ en: "it's free* — Free tools for developers", es: "it's free* — Herramientas gratis para developers" })}
+  title={pageTitle}
   description={homeDescription}
   locale={locale}
-  canonical={localePrefix || "/"}
+  canonical={pagePath}
   alternate={alternateUrl}
 >
   <div class="site-shell">
-    <header class="topbar">
-      <a class="brand" href="#top" aria-label="it's free home">
+    <header class="topbar" transition:name="site-header" transition:animate="none">
+      <a class="brand" href={localePrefix || "/"} aria-label="it's free home">
         <LogoMark />
         <span class="brand-name">it's free<span>*</span></span>
       </a>
@@ -165,10 +177,10 @@ const homeStructuredData = {
         <div class="hero-glow" aria-hidden="true"></div>
         <p class="eyebrow"><span class="status-dot"></span><span>{t({ en: "The good part of the internet", es: "La parte buena de internet" })}</span></p>
         <h1 id="hero-title">
-          <span>{t({ en: "Build more.", es: "Construye más." })}</span>
-          <span class="hero-accent">{t({ en: "Spend less.", es: "Gasta menos." })}</span>
+          <span>{selectedCategory ? t({ en: `Free ${selectedCategory.name.en}.`, es: `${selectedCategory.name.es} gratis.` }) : t({ en: "Build more.", es: "Construye más." })}</span>
+          <span class="hero-accent">{selectedCategory ? t({ en: "Worth using.", es: "Que vale la pena." }) : t({ en: "Spend less.", es: "Gasta menos." })}</span>
         </h1>
-        <p class="hero-copy">{t({ en: "A carefully selected catalog of products with genuinely useful free tiers for developers, makers and small teams.", es: "Un catálogo cuidadosamente seleccionado de productos con capas gratuitas realmente útiles para developers, makers y pequeños equipos." })}</p>
+        <p class="hero-copy">{selectedCategory ? homeDescription : t({ en: "A carefully selected catalog of products with genuinely useful free tiers for developers, makers and small teams.", es: "Un catálogo cuidadosamente seleccionado de productos con capas gratuitas realmente útiles para developers, makers y pequeños equipos." })}</p>
 
         <div class="hero-stats" aria-label="Directory statistics">
           <div><strong>{totalResources}</strong><span>{t({ en: "resources", es: "recursos" })}</span></div>
@@ -178,11 +190,11 @@ const homeStructuredData = {
         </div>
       </section>
 
-      <section class="directory" id="directory" aria-labelledby="directory-title">
+      <section class="directory" id="directory" aria-labelledby="directory-title" transition:name="directory" transition:animate="fade">
         <div class="directory-heading">
           <div>
             <p class="section-kicker">// DIRECTORY_01</p>
-            <h2 id="directory-title">{t({ en: "Find your next tool", es: "Encuentra tu próxima herramienta" })}</h2>
+            <h2 id="directory-title">{selectedCategory ? pageTitle : t({ en: "Find your next tool", es: "Encuentra tu próxima herramienta" })}</h2>
           </div>
           <p>{t({ en: "Search by product, use case or technology.", es: "Busca por producto, caso de uso o tecnología." })}</p>
         </div>
@@ -201,32 +213,32 @@ const homeStructuredData = {
         </div>
 
         <div class="mobile-categories" aria-label="Resource categories">
-          <button class="mobile-category active" type="button" data-category="all">
+          <a class:list={["mobile-category", { active: !selectedCategory }]} href={localePrefix || "/"} data-category-navigation>
             <CategoryIcon name="layout-grid" size={14} />
             <span>{t({ en: "All", es: "Todo" })}</span>
-          </button>
+          </a>
           {categories.map((category) => (
-            <button class="mobile-category" type="button" data-category={category.id}>
+            <a class:list={["mobile-category", { active: selectedCategory?.id === category.id }]} href={`${localePrefix}/categories/${category.id}`} data-category-navigation>
               <CategoryIcon name={category.icon} size={14} />
               <span>{t({ en: category.name.en, es: category.name.es })}</span>
-            </button>
+            </a>
           ))}
         </div>
 
         <div class="catalog-layout">
           <aside class="category-sidebar">
             <div class="category-label">{t({ en: "Browse by category", es: "Explora por categoría" })}</div>
-            <button class="category-button active" type="button" data-category="all">
+            <a class:list={["category-button", { active: !selectedCategory }]} href={localePrefix || "/"} data-category-navigation>
               <span class="category-icon"><CategoryIcon name="layout-grid" /></span>
               <span>{t({ en: "All resources", es: "Todos los recursos" })}</span>
-              <small>{totalResources}</small>
-            </button>
+              <small>{resources.length}</small>
+            </a>
             {categories.map((category) => (
-              <button class="category-button" type="button" data-category={category.id}>
+              <a class:list={["category-button", { active: selectedCategory?.id === category.id }]} href={`${localePrefix}/categories/${category.id}`} data-category-navigation>
                 <span class="category-icon"><CategoryIcon name={category.icon} /></span>
                 <span>{t({ en: category.name.en, es: category.name.es })}</span>
                 <small>{categoryCounts.get(category.id)}</small>
-              </button>
+              </a>
             ))}
             <a class="sponsor-mini" href={`${localePrefix}/sponsor`}>
               <span class="sponsor-mini-mark">AD*</span>
@@ -335,7 +347,7 @@ const homeStructuredData = {
     </main>
 
     <footer class="footer">
-      <a class="brand footer-brand" href="#top"><LogoMark /><span class="brand-name">it's free<span>*</span></span></a>
+      <a class="brand footer-brand" href={localePrefix || "/"}><LogoMark /><span class="brand-name">it's free<span>*</span></span></a>
       <div class="footer-signature">
         <p><span>{t({ en: "A project by", es: "Un proyecto de" })}</span> <a href="https://midu.dev" target="_blank" rel="noreferrer">midu.dev ↗</a></p>
         <p>{t({ en: "Made for developers who read the pricing page first.", es: "Hecho para developers que leen primero la página de precios." })}</p>
@@ -344,7 +356,7 @@ const homeStructuredData = {
         <a href="https://twitter.com/midudev" target="_blank" rel="noreferrer" aria-label="X / Twitter">X <span>↗</span></a>
         <a href="https://youtube.com/@midudev" target="_blank" rel="noreferrer" aria-label="YouTube">YouTube <span>↗</span></a>
         <a href="https://twitch.tv/midudev" target="_blank" rel="noreferrer" aria-label="Twitch">Twitch <span>↗</span></a>
-        <a href="https://github.com/midudev" target="_blank" rel="noreferrer" aria-label="GitHub">GitHub <span>↗</span></a>
+        <a href="https://github.com/midudev/itsfree.dev" target="_blank" rel="noreferrer" aria-label={t({ en: "Open-source project on GitHub", es: "Proyecto de código abierto en GitHub" })}>{t({ en: "Open source", es: "Código abierto" })} <span>↗</span></a>
       </nav>
     </footer>
   </div>
@@ -352,25 +364,6 @@ const homeStructuredData = {
   <script is:inline type="application/ld+json" set:html={JSON.stringify(homeStructuredData)} />
 
   <script>
-    const root = document.documentElement
-    const searchInput = document.querySelector<HTMLInputElement>("#search-input")!
-    const resourceCards = [...document.querySelectorAll<HTMLElement>("[data-resource]")]
-    const categoryButtons = [...document.querySelectorAll<HTMLButtonElement>("[data-category]")]
-    const resultsCount = document.querySelector<HTMLElement>("#results-count")!
-    const emptyState = document.querySelector<HTMLElement>("#empty-state")!
-    const themeToggle = document.querySelector<HTMLButtonElement>("#theme-toggle")!
-
-    document.querySelectorAll<HTMLImageElement>(".resource-logo img").forEach((image) => {
-      const useFallback = () => {
-        image.parentElement?.classList.add("favicon-fallback")
-        image.remove()
-      }
-      image.addEventListener("error", useFallback)
-      if (image.complete && image.naturalWidth === 0) useFallback()
-    })
-
-    let activeCategory = "all"
-
     const normalizeSearch = (value: string) => value
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
@@ -379,73 +372,67 @@ const homeStructuredData = {
       .trim()
     const compactSearch = (value: string) => normalizeSearch(value).replace(/\s+/g, "")
 
-    function applyFilters() {
-      const query = normalizeSearch(searchInput.value)
-      const compactQuery = compactSearch(searchInput.value)
-      let visible = 0
+    function initializeDirectoryPage() {
+      const searchInput = document.querySelector<HTMLInputElement>("#search-input")
+      const resultsCount = document.querySelector<HTMLElement>("#results-count")
+      const emptyState = document.querySelector<HTMLElement>("#empty-state")
+      if (!searchInput || !resultsCount || !emptyState || searchInput.dataset.enhanced === "true") return
+      searchInput.dataset.enhanced = "true"
 
-      resourceCards.forEach((card) => {
-        const matchesCategory = activeCategory === "all" || card.dataset.category === activeCategory
-        const searchable = normalizeSearch(card.dataset.search ?? "")
-        const name = card.dataset.name ?? ""
-        const matchesName = normalizeSearch(name).includes(query) || compactSearch(name).includes(compactQuery)
-        const matchesQuery = !query || matchesName || searchable.includes(query)
-        const show = matchesCategory && matchesQuery
-        card.hidden = !show
-        if (show) visible += 1
+      const resourceCards = [...document.querySelectorAll<HTMLElement>("[data-resource]")]
+
+      document.querySelectorAll<HTMLImageElement>(".resource-logo img").forEach((image) => {
+        const useFallback = () => {
+          image.parentElement?.classList.add("favicon-fallback")
+          image.remove()
+        }
+        image.addEventListener("error", useFallback)
+        if (image.complete && image.naturalWidth === 0) useFallback()
       })
 
-      resultsCount.textContent = String(visible)
-      emptyState.hidden = visible !== 0
-    }
+      const applyFilters = () => {
+        const query = normalizeSearch(searchInput.value)
+        const compactQuery = compactSearch(searchInput.value)
+        let visible = 0
 
-    function selectCategory(category: string) {
-      activeCategory = category
-      categoryButtons.forEach((button) => button.classList.toggle("active", button.dataset.category === category))
+        resourceCards.forEach((card) => {
+          const searchable = normalizeSearch(card.dataset.search ?? "")
+          const name = card.dataset.name ?? ""
+          const matchesName = normalizeSearch(name).includes(query) || compactSearch(name).includes(compactQuery)
+          const show = !query || matchesName || searchable.includes(query)
+          card.hidden = !show
+          if (show) visible += 1
+        })
+
+        resultsCount.textContent = String(visible)
+        emptyState.hidden = visible !== 0
+      }
+
+      searchInput.addEventListener("input", applyFilters)
+      document.querySelector("#reset-filters")?.addEventListener("click", () => {
+        searchInput.value = ""
+        applyFilters()
+        searchInput.focus()
+      })
+
       applyFilters()
     }
 
-    categoryButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        selectCategory(button.dataset.category ?? "all")
-        requestAnimationFrame(() => {
-          document.querySelector("#resource-grid")?.scrollIntoView({
-            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-            block: "start",
-          })
-        })
-      })
-    })
-
-    searchInput.addEventListener("input", () => {
-      if (searchInput.value.trim() && activeCategory !== "all") selectCategory("all")
-      else applyFilters()
-    })
-    document.querySelector("#reset-filters")?.addEventListener("click", () => {
-      searchInput.value = ""
-      selectCategory("all")
-      searchInput.focus()
-    })
-
-    themeToggle.addEventListener("click", () => {
-      const nextTheme = root.dataset.theme === "light" ? "dark" : "light"
-      root.dataset.theme = nextTheme
-      themeToggle.setAttribute("aria-label", nextTheme === "dark" ? "Use light theme" : "Use dark theme")
-      try { localStorage.setItem("itsfree-theme", nextTheme) } catch {}
-    })
-
     document.addEventListener("keydown", (event) => {
+      const searchInput = document.querySelector<HTMLInputElement>("#search-input")
+      if (!searchInput) return
       if (event.key === "/" && document.activeElement !== searchInput) {
         event.preventDefault()
         searchInput.focus()
       }
       if (event.key === "Escape" && document.activeElement === searchInput) {
         searchInput.value = ""
-        applyFilters()
+        searchInput.dispatchEvent(new Event("input"))
         searchInput.blur()
       }
     })
 
-    applyFilters()
+    document.addEventListener("astro:page-load", initializeDirectoryPage)
+    initializeDirectoryPage()
   </script>
 </Layout>

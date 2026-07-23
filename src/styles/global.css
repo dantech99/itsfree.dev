@@ -83,6 +83,18 @@ html {
   background: var(--bg);
 }
 
+::view-transition-group(root) {
+  z-index: 0;
+}
+
+::view-transition-group(directory) {
+  z-index: 1;
+}
+
+::view-transition-group(site-header) {
+  z-index: 100;
+}
+
 body {
   margin: 0;
   min-width: 320px;
@@ -422,6 +434,7 @@ a {
 }
 
 .directory {
+  scroll-margin-top: 76px;
   padding: 112px 40px 130px;
 }
 
@@ -744,6 +757,10 @@ a {
   height: 28px;
   border-radius: 2px;
   object-fit: contain;
+}
+
+:root[data-theme="light"] img[src$="/render.com.svg"] {
+  filter: invert(1);
 }
 
 .resource-initials {

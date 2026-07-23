@@ -1,0 +1,45 @@
+---
+type SupportedLocale = "en" | "es"
+
+export function getStaticPaths() {
+  return (["en", "es"] as const).map((locale) => ({ params: { locale }, props: { locale } }))
+}
+
+const { locale } = Astro.props as { locale: SupportedLocale }
+const fallbackPath = locale === "es" ? "/es" : "/"
+const message = locale === "es" ? "Cambiando a español…" : "Switching to English…"
+---
+
+<!doctype html>
+<html lang={locale} data-locale={locale} data-fallback={fallbackPath}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{message}</title>
+  </head>
+  <body>
+    <p>{message}</p>
+    <a href={fallbackPath}>{locale === "es" ? "Continuar" : "Continue"}</a>
+
+    <script is:inline>
+      const root = document.documentElement
+      const locale = root.dataset.locale
+      const fallback = root.dataset.fallback || "/"
+      const requestedPath = new URLSearchParams(window.location.search).get("redirect")
+      let destination = fallback
+
+      if (requestedPath?.startsWith("/") && !requestedPath.startsWith("//")) {
+        const requestedUrl = new URL(requestedPath, window.location.origin)
+        const isSpanishPath = requestedUrl.pathname === "/es" || requestedUrl.pathname.startsWith("/es/")
+        if ((locale === "es" && isSpanishPath) || (locale === "en" && !isSpanishPath)) {
+          destination = `${requestedUrl.pathname}${requestedUrl.search}${requestedUrl.hash}`
+        }
+      }
+
+      const secure = window.location.protocol === "https:" ? "; Secure" : ""
+      document.cookie = `itsfree_locale=${locale}; Max-Age=31536000; Path=/; SameSite=Lax${secure}`
+      window.location.replace(destination)
+    </script>
+  </body>
+</html>
